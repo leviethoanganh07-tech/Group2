@@ -667,7 +667,12 @@ function closeLightbox() {
   document.getElementById('lightbox').classList.remove('open');
 }
 function renderLb() {
-  document.getElementById('lb-img').src = lbPhotos[lbIndex];
+  const img = document.getElementById('lb-img');
+  img.src = '';
+  img.src = encodeURI(lbPhotos[lbIndex]);
+  img.onerror = () => {
+    img.alt = '⚠️ Không tải được ảnh – kiểm tra lại tên file';
+  };
   document.getElementById('lb-counter').textContent = (lbIndex + 1) + ' / ' + lbPhotos.length;
   document.getElementById('lb-prev').style.opacity = lbIndex === 0 ? '0.3' : '1';
   document.getElementById('lb-next').style.opacity = lbIndex === lbPhotos.length - 1 ? '0.3' : '1';
