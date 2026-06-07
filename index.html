@@ -275,6 +275,7 @@ main{max-width:1200px;margin:0 auto;padding:32px 24px 80px}
     <button class="tab active" data-cat="all">🍴 Tất cả</button>
     <button class="tab" data-cat="com">🍚 Cơm</button>
     <button class="tab" data-cat="bun">🍜 Bún</button>
+    <button class="tab" data-cat="xoi">🍚 Xôi</button>
     <button class="tab" data-cat="do-uong">🧋 Đồ uống</button>
     <button class="tab" data-cat="banh-mi">🥖 Bánh mì</button>
     <button class="tab" data-cat="kem">🍦 Kem </button>
@@ -393,32 +394,32 @@ const RESTAURANTS = [
     distance: '2.4 km', phone: 'None',
     mapLat: 15.978792628334535, mapLng: 108.25026628356206,
     mapLink: 'https://maps.app.goo.gl/BggdbFtj9vo7W6db9?g_st=ic',
-    desc: 'Kem tươi cùng các loại trà và nước giải khát đẹp mắt và ngon miệng.',
+    desc: 'Kem tươi cùng các loại trà và nước giải khát đẹp mắt và ngon miệng, topping phong phú: trân châu, thạch, pudding, hồng trà kem. Không gian máy lạnh mát mẻ, wifi miễn phí.',
     keywords: ['trà sữa','trà','sữa','milk tea','bubble tea','uống','nước','tra sua','kem','kem tươi']
   },
   {
     id: 2,
-    name: 'Trà sữa Ông Địa',
-    address: '192 Nguyễn Văn Thoại, Ngũ Hành Sơn, Đà Nẵng',
-    shortAddr: '192 Nguyễn Văn Thoại',
-    price: '25.000đ', priceNum: 25000, rating: 4.3,
-    tags: ['Trà sữa', 'Đồ uống'],
-    categories: ['do-uong'],
-    coverImg: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80',
+    name: 'Xôi & bánh mì chảo OHA',
+    address: 'Đào Tấn, Điện Bàn Đông, Đà Nẵng 560000',
+    shortAddr: 'Đào Tấn',
+    price: '15k - 35k', priceNum: 25000, rating: 5,
+    tags: ['Bánh mì chảo', 'Xôi'],
+    categories: ['banh-mi','xoi'],
+    coverImg: './foodmap/images/biaoha.jpg',
     photos: [
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
-      'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400&q=80',
-      'https://images.unsplash.com/photo-1541167760496-1628856ab772?w=400&q=80',
-      'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=400&q=80',
-      'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&q=80'
+      './foodmap/images/menuoha.jpg',
+      './foodmap/images/oha1.jpg',
+      './foodmap/images/oha2.jpg',
+      './foodmap/images/oha3.jpg',
+      './foodmap/images/oha4.jpg'
     ],
     status: 'open',
-    hours: '09:00 – 23:00 (Hằng ngày)',
-    distance: '0.8 km', phone: '0912 345 678',
-    mapLat: 16.0685, mapLng: 108.2575,
-    mapLink: 'https://www.google.com/maps/search/?api=1&query=192+Nguyen+Van+Thoai+Ngu+Hanh+Son+Da+Nang',
-    desc: 'Trà sữa đa vị từ truyền thống đến hiện đại, topping phong phú: trân châu, thạch, pudding, hồng trà kem. Không gian máy lạnh mát mẻ, wifi miễn phí.',
-    keywords: ['trà sữa','trà','sữa','milk tea','bubble tea','uống','nước','tra sua']
+    hours: '06:00 – 12:00 (Hằng ngày)',
+    distance: '400m', phone: '0396 432 597',
+    mapLat: 15.968117362381703, mapLng: 108.25857611383567,
+    mapLink: 'https://maps.app.goo.gl/YzVMYps8X4ZUNJQJA',
+    desc: 'Bánh mì chảo cùng với xôi có nhiều loại toping, giá thành rẻ và chất lượng, không gian yên tĩnh, chủ quán thân thiện.',
+    keywords: ['xôi','bánh mì chảo','bánh mì','chảo','trứng','xoi','banh mi chao','banh mi','chao','trung']
   },
   {
     id: 3,
