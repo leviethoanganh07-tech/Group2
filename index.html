@@ -20,962 +20,226 @@
   --border: #F0E6DC;
   --border-hover: #FFCDB8;
   --radius: 18px;
-  --radius-sm: 10px;
   --shadow-card: 0 2px 16px rgba(255,107,53,0.07), 0 1px 4px rgba(0,0,0,0.05);
-  --shadow-hover: 0 12px 40px rgba(255,107,53,0.18), 0 4px 12px rgba(0,0,0,0.06);
+  --shadow-hover: 0 12px 40px rgba(255,107,53,0.18), 0 4px 12px rgba(0,0,0,0.08);
   --shadow-modal: 0 24px 80px rgba(0,0,0,0.22);
 }
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+/* ── HEADER ── */
+header{background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);border-bottom:1.5px solid var(--border);position:sticky;top:0;z-index:200}
+.header-inner{max-width:1200px;margin:0 auto;padding:0 24px;height:66px;display:flex;align-items:center;gap:20px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+.logo-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--primary) 0%,var(--secondary) 100%);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 4px 12px rgba(255,107,53,0.3)}
+.logo-text{font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:var(--primary);letter-spacing:-0.5px}
+.logo-text span{color:var(--text)}
+.search-wrap{flex:1;max-width:460px;position:relative}
+.search-wrap input{width:100%;height:42px;border-radius:21px;border:1.5px solid var(--border);background:var(--bg);padding:0 44px 0 18px;font-family:'Nunito',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s}
+.search-wrap input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(255,107,53,0.12)}
+.search-wrap input::placeholder{color:var(--text-muted)}
+.search-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:17px;pointer-events:none}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:12px}
+.viewed-badge{background:var(--primary);color:white;font-size:12px;font-weight:700;padding:5px 13px;border-radius:20px;white-space:nowrap;transition:all .3s;letter-spacing:.2px}
+.location-chip{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--text-sub);background:var(--bg);border:1.5px solid var(--border);border-radius:20px;padding:5px 13px;white-space:nowrap}
 
-html { scroll-behavior: smooth; }
+/* ── HERO ── */
+.hero-band{background:linear-gradient(135deg,#FF6B35 0%,#FFB830 100%);padding:36px 24px;text-align:center;color:white}
+.hero-band h1{font-family:'Sora',sans-serif;font-size:clamp(22px,4vw,34px);font-weight:800;margin-bottom:6px;letter-spacing:-.5px}
+.hero-band p{font-size:15px;opacity:.88;font-weight:500}
+.hero-stats{display:flex;justify-content:center;gap:28px;margin-top:22px;flex-wrap:wrap}
+.hero-stat{display:flex;flex-direction:column;align-items:center;gap:2px}
+.hero-stat .hs-val{font-family:'Sora',sans-serif;font-size:22px;font-weight:800}
+.hero-stat .hs-lbl{font-size:12px;opacity:.8;font-weight:600;letter-spacing:.3px}
 
-body {
-  font-family: 'Nunito', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
-}
+/* ── MAIN ── */
+main{max-width:1200px;margin:0 auto;padding:32px 24px 80px}
 
-/* ── SCROLLBAR ── */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
-/* ═══════════════════════════════════════
-   HEADER
-═══════════════════════════════════════ */
-header {
-  background: rgba(255,255,255,0.95);
-  backdrop-filter: blur(12px);
-  border-bottom: 1.5px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 200;
-}
-
-.header-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 24px;
-  height: 66px;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-  flex-shrink: 0;
-}
-
-.logo-icon {
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  box-shadow: 0 4px 12px rgba(255,107,53,0.3);
-}
-
-.logo-text {
-  font-family: 'Sora', sans-serif;
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--primary);
-  letter-spacing: -0.5px;
-}
-
-.logo-text span { color: var(--text); }
-
-.search-wrap {
-  flex: 1;
-  max-width: 460px;
-  position: relative;
-}
-
-.search-wrap input {
-  width: 100%;
-  height: 42px;
-  border-radius: 21px;
-  border: 1.5px solid var(--border);
-  background: var(--bg);
-  padding: 0 44px 0 18px;
-  font-family: 'Nunito', sans-serif;
-  font-size: 14px;
-  color: var(--text);
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.search-wrap input:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(255,107,53,0.12);
-}
-
-.search-wrap input::placeholder { color: var(--text-muted); }
-
-.search-icon {
-  position: absolute;
-  right: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 17px;
-  pointer-events: none;
-}
-
-.header-right {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.viewed-badge {
-  background: var(--primary);
-  color: white;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 5px 13px;
-  border-radius: 20px;
-  white-space: nowrap;
-  transition: all 0.3s;
-  letter-spacing: 0.2px;
-}
-
-.location-chip {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-sub);
-  background: var(--bg);
-  border: 1.5px solid var(--border);
-  border-radius: 20px;
-  padding: 5px 13px;
-  white-space: nowrap;
-}
-
-/* ═══════════════════════════════════════
-   HERO BAND
-═══════════════════════════════════════ */
-.hero-band {
-  background: linear-gradient(135deg, #FF6B35 0%, #FFB830 100%);
-  padding: 36px 24px;
-  text-align: center;
-  color: white;
-}
-
-.hero-band h1 {
-  font-family: 'Sora', sans-serif;
-  font-size: clamp(22px, 4vw, 34px);
-  font-weight: 800;
-  margin-bottom: 6px;
-  letter-spacing: -0.5px;
-}
-
-.hero-band p {
-  font-size: 15px;
-  opacity: 0.88;
-  font-weight: 500;
-}
-
-.hero-stats {
-  display: flex;
-  justify-content: center;
-  gap: 28px;
-  margin-top: 22px;
-  flex-wrap: wrap;
-}
-
-.hero-stat {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
-
-.hero-stat .hs-val {
-  font-family: 'Sora', sans-serif;
-  font-size: 22px;
-  font-weight: 800;
-}
-
-.hero-stat .hs-lbl {
-  font-size: 12px;
-  opacity: 0.8;
-  font-weight: 600;
-  letter-spacing: 0.3px;
-}
-
-/* ═══════════════════════════════════════
-   MAIN
-═══════════════════════════════════════ */
-main {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 32px 24px 80px;
-}
-
-/* ── FILTER TABS ── */
-.filter-row {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 28px;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.filter-label {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-sub);
-  margin-right: 4px;
-}
-
-.tab {
-  padding: 8px 18px;
-  border-radius: 22px;
-  border: 1.5px solid var(--border);
-  background: white;
-  font-family: 'Nunito', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-sub);
-  cursor: pointer;
-  transition: all 0.2s;
-  user-select: none;
-}
-
-.tab:hover {
-  border-color: var(--primary);
-  color: var(--primary);
-  background: var(--primary-light);
-}
-
-.tab.active {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: white;
-  box-shadow: 0 4px 12px rgba(255,107,53,0.28);
-}
+/* ── FILTER ── */
+.filter-row{display:flex;gap:8px;margin-bottom:28px;flex-wrap:wrap;align-items:center}
+.filter-label{font-size:13px;font-weight:700;color:var(--text-sub);margin-right:4px}
+.tab{padding:8px 18px;border-radius:22px;border:1.5px solid var(--border);background:white;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;color:var(--text-sub);cursor:pointer;transition:all .2s;user-select:none}
+.tab:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-light)}
+.tab.active{background:var(--primary);border-color:var(--primary);color:white;box-shadow:0 4px 12px rgba(255,107,53,0.28)}
 
 /* ── SECTION LABEL ── */
-.section-label {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-.section-label h2 {
-  font-family: 'Sora', sans-serif;
-  font-size: 19px;
-  font-weight: 800;
-  color: var(--text);
-}
-
-.count-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-muted);
-}
+.section-label{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.section-label h2{font-family:'Sora',sans-serif;font-size:19px;font-weight:800;color:var(--text)}
+.count-label{font-size:13px;font-weight:600;color:var(--text-muted)}
 
 /* ── GRID ── */
-.food-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
-  gap: 22px;
-}
+.food-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(272px,1fr));gap:22px}
 
 /* ── CARD ── */
-.food-card {
-  background: var(--bg-card);
-  border-radius: var(--radius);
-  border: 1.5px solid var(--border);
-  box-shadow: var(--shadow-card);
-  cursor: pointer;
-  transition: transform 0.26s cubic-bezier(.22,.68,0,1.2), box-shadow 0.26s ease, border-color 0.2s;
-  position: relative;
-  overflow: hidden;
-  animation: fadeUp 0.45s cubic-bezier(.22,.68,0,1.2) both;
-}
+.food-card{background:var(--bg-card);border-radius:var(--radius);border:1.5px solid var(--border);box-shadow:var(--shadow-card);cursor:pointer;transition:transform .26s cubic-bezier(.22,.68,0,1.2),box-shadow .26s ease,border-color .2s;position:relative;overflow:hidden;animation:fadeUp .45s cubic-bezier(.22,.68,0,1.2) both}
+.food-card:hover{transform:translateY(-8px) scale(1.012);box-shadow:var(--shadow-hover);border-color:var(--border-hover)}
+.food-card:nth-child(1){animation-delay:.04s}
+.food-card:nth-child(2){animation-delay:.10s}
+.food-card:nth-child(3){animation-delay:.16s}
+.food-card:nth-child(4){animation-delay:.22s}
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
 
-.food-card:hover {
-  transform: translateY(-8px) scale(1.012);
-  box-shadow: var(--shadow-hover);
-  border-color: var(--border-hover);
-}
+/* Card image */
+.card-img{width:100%;height:190px;position:relative;overflow:hidden}
+.card-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
+.food-card:hover .card-img img{transform:scale(1.07)}
+.card-img-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0) 40%,rgba(0,0,0,0.28) 100%)}
 
-.food-card:nth-child(1) { animation-delay: 0.04s; }
-.food-card:nth-child(2) { animation-delay: 0.10s; }
-.food-card:nth-child(3) { animation-delay: 0.16s; }
-.food-card:nth-child(4) { animation-delay: 0.22s; }
+.card-tags-row{position:absolute;top:12px;left:12px;display:flex;gap:6px;z-index:2}
+.ctag{padding:4px 11px;border-radius:20px;font-size:11px;font-weight:800;letter-spacing:.2px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.ctag-a{background:rgba(255,107,53,0.9);color:white}
+.ctag-b{background:rgba(255,255,255,0.88);color:var(--primary)}
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(22px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* Card image area */
-.card-img {
-  width: 100%;
-  height: 176px;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 72px;
-  transition: transform 0.4s ease;
-}
-
-.food-card:hover .card-img { transform: scale(1.04); }
-
-.card-tags-row {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  display: flex;
-  gap: 6px;
-  z-index: 2;
-}
-
-.ctag {
-  padding: 4px 11px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.2px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-.ctag-a {
-  background: rgba(255,107,53,0.88);
-  color: white;
-}
-
-.ctag-b {
-  background: rgba(255,255,255,0.88);
-  color: var(--primary);
-}
-
-/* Đã xem badge */
-.viewed-chip {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background: rgba(20,20,30,0.72);
-  color: white;
-  font-size: 11px;
-  font-weight: 800;
-  padding: 4px 11px;
-  border-radius: 20px;
-  display: none;
-  z-index: 2;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  letter-spacing: 0.2px;
-}
-
-.food-card.viewed .viewed-chip { display: block; }
+.viewed-chip{position:absolute;top:12px;right:12px;background:rgba(20,20,30,0.72);color:white;font-size:11px;font-weight:800;padding:4px 11px;border-radius:20px;display:none;z-index:2;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);letter-spacing:.2px}
+.food-card.viewed .viewed-chip{display:block}
 
 /* Card body */
-.card-body {
-  padding: 16px 18px 18px;
-}
+.card-body{padding:16px 18px 18px}
+.card-name{font-family:'Sora',sans-serif;font-size:15.5px;font-weight:800;color:var(--text);margin-bottom:7px;line-height:1.3}
+.card-addr{display:flex;align-items:flex-start;gap:5px;font-size:12.5px;color:var(--text-sub);margin-bottom:14px;line-height:1.45}
+.card-addr .pin{flex-shrink:0;font-size:13px;margin-top:1px}
+.card-footer{display:flex;align-items:center;justify-content:space-between;padding-top:13px;border-top:1.5px solid var(--border)}
+.card-price{font-size:17px;font-weight:900;color:var(--primary);font-family:'Sora',sans-serif}
+.card-right-col{display:flex;flex-direction:column;align-items:flex-end;gap:5px}
+.card-rating{font-size:13px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:3px}
+.card-status{font-size:11.5px;font-weight:700;display:flex;align-items:center;gap:5px}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dot-open{background:#22C55E;box-shadow:0 0 0 2px rgba(34,197,94,0.2)}
+.dot-closed{background:#EF4444}
+.status-open{color:#16A34A}
+.status-closed{color:#DC2626}
 
-.card-name {
-  font-family: 'Sora', sans-serif;
-  font-size: 15.5px;
-  font-weight: 800;
-  color: var(--text);
-  margin-bottom: 7px;
-  line-height: 1.3;
-}
+/* ── MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(10,10,20,0.6);z-index:900;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .28s ease;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.overlay.open{opacity:1;pointer-events:all}
+.modal{background:white;border-radius:22px;width:100%;max-width:740px;max-height:94vh;overflow-y:auto;box-shadow:var(--shadow-modal);transform:translateY(28px) scale(0.96);transition:transform .32s cubic-bezier(.22,.68,0,1.1);border:1.5px solid var(--border)}
+.overlay.open .modal{transform:translateY(0) scale(1)}
 
-.card-addr {
-  display: flex;
-  align-items: flex-start;
-  gap: 5px;
-  font-size: 12.5px;
-  color: var(--text-sub);
-  margin-bottom: 14px;
-  line-height: 1.45;
-}
+/* Modal hero image */
+.modal-hero{position:relative;height:240px;border-radius:22px 22px 0 0;overflow:hidden}
+.modal-hero img{width:100%;height:100%;object-fit:cover;display:block}
+.modal-hero-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.1) 0%,rgba(0,0,0,0.45) 100%)}
+.modal-close-btn{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,0.45);border:1.5px solid rgba(255,255,255,0.3);color:white;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:2}
+.modal-close-btn:hover{background:rgba(0,0,0,0.65)}
+.modal-hero-tags{position:absolute;bottom:14px;left:16px;display:flex;gap:7px;z-index:2}
+.modal-hero-name{position:absolute;bottom:44px;left:16px;right:56px;font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:white;text-shadow:0 2px 8px rgba(0,0,0,0.5);z-index:2;line-height:1.25}
 
-.card-addr .pin { flex-shrink: 0; font-size: 13px; margin-top: 1px; }
+/* Modal body */
+.modal-body{padding:22px 26px 28px}
+.modal-info-line{display:flex;align-items:flex-start;gap:7px;font-size:14px;color:var(--text-sub);margin-bottom:7px;line-height:1.4}
+.modal-info-line .ico{flex-shrink:0;font-size:15px}
 
-.card-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: 13px;
-  border-top: 1.5px solid var(--border);
-}
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}
+.stat-box{background:var(--bg);border:1.5px solid var(--border);border-radius:13px;padding:14px 10px 12px;text-align:center}
+.stat-box .sv{font-family:'Sora',sans-serif;font-size:19px;font-weight:800;color:var(--primary);display:block;margin-bottom:3px}
+.stat-box .sl{font-size:11.5px;font-weight:600;color:var(--text-muted)}
 
-.card-price {
-  font-size: 17px;
-  font-weight: 900;
-  color: var(--primary);
-  font-family: 'Sora', sans-serif;
-}
+.modal-divider{height:1.5px;background:var(--border);margin:18px 0}
+.modal-desc{font-size:14px;line-height:1.7;color:var(--text-sub);margin:14px 0}
 
-.card-right-col {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 5px;
-}
-
-.card-rating {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  gap: 3px;
-}
-
-.card-status {
-  font-size: 11.5px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
-.dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.dot-open  { background: #22C55E; box-shadow: 0 0 0 2px rgba(34,197,94,0.2); }
-.dot-closed { background: #EF4444; }
-.status-open   { color: #16A34A; }
-.status-closed { color: #DC2626; }
-
-/* ═══════════════════════════════════════
-   MODAL
-═══════════════════════════════════════ */
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(10,10,20,0.55);
-  z-index: 900;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.28s ease;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
-
-.overlay.open {
-  opacity: 1;
-  pointer-events: all;
-}
-
-.modal {
-  background: white;
-  border-radius: 22px;
-  width: 100%;
-  max-width: 720px;
-  max-height: 92vh;
-  overflow-y: auto;
-  box-shadow: var(--shadow-modal);
-  transform: translateY(28px) scale(0.96);
-  transition: transform 0.32s cubic-bezier(.22,.68,0,1.1);
-  border: 1.5px solid var(--border);
-}
-
-.overlay.open .modal {
-  transform: translateY(0) scale(1);
-}
-
-.modal-hero {
-  position: relative;
-  height: 230px;
-  border-radius: 22px 22px 0 0;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 96px;
-}
-
-.modal-close-btn {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: rgba(0,0,0,0.45);
-  border: 1.5px solid rgba(255,255,255,0.3);
-  color: white;
-  font-size: 17px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-.modal-close-btn:hover { background: rgba(0,0,0,0.65); }
-
-.modal-hero-tags {
-  position: absolute;
-  bottom: 14px;
-  left: 16px;
-  display: flex;
-  gap: 7px;
-}
-
-.modal-body {
-  padding: 24px 26px 28px;
-}
-
-.modal-title {
-  font-family: 'Sora', sans-serif;
-  font-size: 24px;
-  font-weight: 800;
-  color: var(--text);
-  margin-bottom: 10px;
-  line-height: 1.25;
-}
-
-.modal-info-line {
-  display: flex;
-  align-items: flex-start;
-  gap: 7px;
-  font-size: 14px;
-  color: var(--text-sub);
-  margin-bottom: 7px;
-  line-height: 1.4;
-}
-
-.modal-info-line .ico { flex-shrink: 0; font-size: 15px; }
-
-/* Stats row */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin: 20px 0;
-}
-
-.stat-box {
-  background: var(--bg);
-  border: 1.5px solid var(--border);
-  border-radius: 13px;
-  padding: 14px 10px 12px;
-  text-align: center;
-}
-
-.stat-box .sv {
-  font-family: 'Sora', sans-serif;
-  font-size: 19px;
-  font-weight: 800;
-  color: var(--primary);
-  display: block;
-  margin-bottom: 3px;
-}
-
-.stat-box .sl {
-  font-size: 11.5px;
-  font-weight: 600;
-  color: var(--text-muted);
-}
-
-/* Divider */
-.modal-divider {
-  height: 1.5px;
-  background: var(--border);
-  margin: 18px 0;
-}
+/* ── PHOTO GALLERY ── */
+.gallery-label{font-size:13px;font-weight:700;color:var(--text-sub);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.photo-gallery{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:130px 130px;gap:8px;border-radius:14px;overflow:hidden;margin-bottom:18px}
+.photo-gallery .ph-img{overflow:hidden;position:relative;cursor:pointer}
+.photo-gallery .ph-img img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s ease}
+.photo-gallery .ph-img:hover img{transform:scale(1.08)}
+.photo-gallery .ph-img:first-child{grid-row:1/3}
+.ph-more-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.52);display:flex;align-items:center;justify-content:center;color:white;font-family:'Sora',sans-serif;font-size:18px;font-weight:800;letter-spacing:.5px}
 
 /* Map */
-.map-wrap {
-  border-radius: 14px;
-  overflow: hidden;
-  height: 260px;
-  border: 1.5px solid var(--border);
-}
+.map-label{font-size:13px;font-weight:700;color:var(--text-sub);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.map-wrap{border-radius:14px;overflow:hidden;height:250px;border:1.5px solid var(--border)}
+.map-wrap iframe{width:100%;height:100%;border:none;display:block}
 
-.map-wrap iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  display: block;
-}
+/* Actions */
+.modal-actions{display:flex;gap:11px;margin-top:20px}
+.btn-pri{flex:1;height:46px;background:var(--primary);color:white;border:none;border-radius:23px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;transition:background .2s,transform .15s;letter-spacing:.2px}
+.btn-pri:hover{background:var(--primary-hover);transform:scale(1.02)}
+.btn-pri:active{transform:scale(0.98)}
+.btn-sec{height:46px;padding:0 22px;background:white;color:var(--primary);border:2px solid var(--primary);border-radius:23px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;transition:all .2s}
+.btn-sec:hover{background:var(--primary-light)}
 
-.map-label {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-sub);
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
+/* ── LIGHTBOX ── */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:1100;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.lightbox.open{opacity:1;pointer-events:all}
+.lightbox img{max-width:90vw;max-height:88vh;object-fit:contain;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,0.5)}
+.lb-close{position:absolute;top:20px;right:24px;background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.25);color:white;width:42px;height:42px;border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.lb-close:hover{background:rgba(255,255,255,0.22)}
+.lb-nav{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.25);color:white;width:48px;height:48px;border-radius:50%;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.lb-nav:hover{background:rgba(255,255,255,0.22)}
+.lb-prev{left:20px}
+.lb-next{right:20px}
+.lb-counter{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,0.7);font-size:13px;font-weight:600;font-family:'Nunito',sans-serif}
 
-/* Description */
-.modal-desc {
-  font-size: 14px;
-  line-height: 1.7;
-  color: var(--text-sub);
-  margin: 14px 0;
-}
+/* ── CHATBOT ── */
+.chat-fab{position:fixed;bottom:26px;right:26px;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--primary) 0%,var(--secondary) 100%);border:none;box-shadow:0 6px 24px rgba(255,107,53,0.42);cursor:pointer;font-size:26px;display:flex;align-items:center;justify-content:center;z-index:800;transition:transform .22s cubic-bezier(.22,.68,0,1.4),box-shadow .2s}
+.chat-fab:hover{transform:scale(1.1);box-shadow:0 8px 32px rgba(255,107,53,0.52)}
+.chat-fab:active{transform:scale(0.95)}
+.chat-notif-dot{position:absolute;top:3px;right:3px;width:13px;height:13px;background:#22C55E;border:2.5px solid white;border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
 
-/* Action buttons */
-.modal-actions {
-  display: flex;
-  gap: 11px;
-  margin-top: 20px;
-}
+.chat-window{position:fixed;bottom:96px;right:26px;width:348px;height:500px;background:white;border-radius:22px;box-shadow:0 16px 64px rgba(0,0,0,0.16),0 4px 16px rgba(0,0,0,0.06);display:flex;flex-direction:column;z-index:799;border:1.5px solid var(--border);opacity:0;pointer-events:none;transform:translateY(18px) scale(0.95);transition:all .26s cubic-bezier(.22,.68,0,1.2);overflow:hidden}
+.chat-window.open{opacity:1;pointer-events:all;transform:translateY(0) scale(1)}
+.chat-head{background:linear-gradient(135deg,#FF6B35 0%,#FFB830 100%);padding:16px 18px;display:flex;align-items:center;gap:11px;flex-shrink:0}
+.chat-avatar{width:40px;height:40px;background:rgba(255,255,255,0.22);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;border:1.5px solid rgba(255,255,255,0.3)}
+.chat-head-info{flex:1}
+.chat-head-title{font-family:'Sora',sans-serif;font-size:15px;font-weight:800;color:white}
+.chat-head-sub{font-size:11.5px;color:rgba(255,255,255,0.8);font-weight:500}
+.chat-head-close{background:rgba(255,255,255,0.18);border:none;color:white;width:30px;height:30px;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.chat-head-close:hover{background:rgba(255,255,255,0.32)}
+.chat-msgs{flex:1;overflow-y:auto;padding:16px 14px;display:flex;flex-direction:column;gap:10px;background:#FAFAF8}
+.msg{max-width:86%;padding:10px 14px;border-radius:18px;font-size:13.5px;line-height:1.55;word-break:break-word}
+.msg.bot{background:white;color:var(--text);border-radius:5px 18px 18px 18px;align-self:flex-start;border:1.5px solid var(--border);box-shadow:0 1px 4px rgba(0,0,0,0.05)}
+.msg.user{background:linear-gradient(135deg,var(--primary),#FF8C5A);color:white;border-radius:18px 5px 18px 18px;align-self:flex-end;box-shadow:0 2px 8px rgba(255,107,53,0.28)}
+.typing-wrap{display:flex;gap:5px;padding:12px 16px;background:white;border-radius:5px 18px 18px 18px;align-self:flex-start;border:1.5px solid var(--border)}
+.tdot{width:7px;height:7px;background:var(--text-muted);border-radius:50%;animation:blink 1.3s infinite}
+.tdot:nth-child(2){animation-delay:.2s}
+.tdot:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.4;transform:scale(.85)}40%{opacity:1;transform:scale(1.1)}}
+.quick-chips{display:flex;flex-wrap:wrap;gap:6px;padding:8px 14px 0;background:#FAFAF8}
+.chip{padding:5px 12px;background:var(--primary-light);color:var(--primary);border:1.5px solid rgba(255,107,53,0.2);border-radius:16px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;transition:all .18s}
+.chip:hover{background:var(--primary);color:white}
+.chat-input-row{padding:11px 13px;border-top:1.5px solid var(--border);display:flex;gap:8px;align-items:center;background:white;flex-shrink:0}
+.chat-input-row input{flex:1;height:40px;border:1.5px solid var(--border);border-radius:20px;padding:0 16px;font-family:'Nunito',sans-serif;font-size:13.5px;outline:none;background:var(--bg);color:var(--text);transition:border-color .2s}
+.chat-input-row input:focus{border-color:var(--primary)}
+.chat-input-row input::placeholder{color:var(--text-muted)}
+.chat-send{width:40px;height:40px;border-radius:50%;background:var(--primary);border:none;color:white;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .2s,transform .15s}
+.chat-send:hover{background:var(--primary-hover)}
+.chat-send:active{transform:scale(0.9)}
 
-.btn-pri {
-  flex: 1;
-  height: 46px;
-  background: var(--primary);
-  color: white;
-  border: none;
-  border-radius: 23px;
-  font-family: 'Nunito', sans-serif;
-  font-size: 14px;
-  font-weight: 800;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.15s;
-  letter-spacing: 0.2px;
-}
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:60px 20px;color:var(--text-muted);grid-column:1/-1}
+.empty-state .es-icon{font-size:56px;margin-bottom:16px}
+.empty-state h3{font-family:'Sora',sans-serif;font-size:18px;color:var(--text-sub);margin-bottom:8px}
 
-.btn-pri:hover { background: var(--primary-hover); transform: scale(1.02); }
-.btn-pri:active { transform: scale(0.98); }
-
-.btn-sec {
-  height: 46px;
-  padding: 0 22px;
-  background: white;
-  color: var(--primary);
-  border: 2px solid var(--primary);
-  border-radius: 23px;
-  font-family: 'Nunito', sans-serif;
-  font-size: 14px;
-  font-weight: 800;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-sec:hover { background: var(--primary-light); }
-
-/* ═══════════════════════════════════════
-   CHATBOT
-═══════════════════════════════════════ */
-.chat-fab {
-  position: fixed;
-  bottom: 26px;
-  right: 26px;
-  width: 58px;
-  height: 58px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-  border: none;
-  box-shadow: 0 6px 24px rgba(255,107,53,0.42);
-  cursor: pointer;
-  font-size: 26px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 800;
-  transition: transform 0.22s cubic-bezier(.22,.68,0,1.4), box-shadow 0.2s;
-}
-
-.chat-fab:hover {
-  transform: scale(1.1);
-  box-shadow: 0 8px 32px rgba(255,107,53,0.52);
-}
-
-.chat-fab:active { transform: scale(0.95); }
-
-.chat-notif-dot {
-  position: absolute;
-  top: 3px;
-  right: 3px;
-  width: 13px;
-  height: 13px;
-  background: #22C55E;
-  border: 2.5px solid white;
-  border-radius: 50%;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.18); }
-}
-
-.chat-window {
-  position: fixed;
-  bottom: 96px;
-  right: 26px;
-  width: 348px;
-  height: 500px;
-  background: white;
-  border-radius: 22px;
-  box-shadow: 0 16px 64px rgba(0,0,0,0.16), 0 4px 16px rgba(0,0,0,0.06);
-  display: flex;
-  flex-direction: column;
-  z-index: 799;
-  border: 1.5px solid var(--border);
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(18px) scale(0.95);
-  transition: all 0.26s cubic-bezier(.22,.68,0,1.2);
-  overflow: hidden;
-}
-
-.chat-window.open {
-  opacity: 1;
-  pointer-events: all;
-  transform: translateY(0) scale(1);
-}
-
-.chat-head {
-  background: linear-gradient(135deg, #FF6B35 0%, #FFB830 100%);
-  padding: 16px 18px;
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  flex-shrink: 0;
-}
-
-.chat-avatar {
-  width: 40px;
-  height: 40px;
-  background: rgba(255,255,255,0.22);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  flex-shrink: 0;
-  border: 1.5px solid rgba(255,255,255,0.3);
-}
-
-.chat-head-info { flex: 1; }
-.chat-head-title {
-  font-family: 'Sora', sans-serif;
-  font-size: 15px;
-  font-weight: 800;
-  color: white;
-}
-.chat-head-sub { font-size: 11.5px; color: rgba(255,255,255,0.8); font-weight: 500; }
-
-.chat-head-close {
-  background: rgba(255,255,255,0.18);
-  border: none;
-  color: white;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  font-size: 16px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s;
-}
-
-.chat-head-close:hover { background: rgba(255,255,255,0.32); }
-
-.chat-msgs {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  background: #FAFAF8;
-}
-
-.msg {
-  max-width: 86%;
-  padding: 10px 14px;
-  border-radius: 18px;
-  font-size: 13.5px;
-  line-height: 1.55;
-  word-break: break-word;
-}
-
-.msg.bot {
-  background: white;
-  color: var(--text);
-  border-radius: 5px 18px 18px 18px;
-  align-self: flex-start;
-  border: 1.5px solid var(--border);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-}
-
-.msg.user {
-  background: linear-gradient(135deg, var(--primary), #FF8C5A);
-  color: white;
-  border-radius: 18px 5px 18px 18px;
-  align-self: flex-end;
-  box-shadow: 0 2px 8px rgba(255,107,53,0.28);
-}
-
-.typing-wrap {
-  display: flex;
-  gap: 5px;
-  padding: 12px 16px;
-  background: white;
-  border-radius: 5px 18px 18px 18px;
-  align-self: flex-start;
-  border: 1.5px solid var(--border);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-}
-
-.tdot {
-  width: 7px;
-  height: 7px;
-  background: var(--text-muted);
-  border-radius: 50%;
-  animation: blink 1.3s infinite;
-}
-
-.tdot:nth-child(2) { animation-delay: 0.2s; }
-.tdot:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes blink {
-  0%, 80%, 100% { opacity: 0.4; transform: scale(0.85); }
-  40%           { opacity: 1;   transform: scale(1.1);  }
-}
-
-/* Quick suggest chips */
-.quick-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  padding: 8px 14px 0;
-  background: #FAFAF8;
-}
-
-.chip {
-  padding: 5px 12px;
-  background: var(--primary-light);
-  color: var(--primary);
-  border: 1.5px solid rgba(255,107,53,0.2);
-  border-radius: 16px;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  font-family: 'Nunito', sans-serif;
-  transition: all 0.18s;
-}
-
-.chip:hover { background: var(--primary); color: white; }
-
-.chat-input-row {
-  padding: 11px 13px;
-  border-top: 1.5px solid var(--border);
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  background: white;
-  flex-shrink: 0;
-}
-
-.chat-input-row input {
-  flex: 1;
-  height: 40px;
-  border: 1.5px solid var(--border);
-  border-radius: 20px;
-  padding: 0 16px;
-  font-family: 'Nunito', sans-serif;
-  font-size: 13.5px;
-  outline: none;
-  background: var(--bg);
-  color: var(--text);
-  transition: border-color 0.2s;
-}
-
-.chat-input-row input:focus { border-color: var(--primary); }
-.chat-input-row input::placeholder { color: var(--text-muted); }
-
-.chat-send {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--primary);
-  border: none;
-  color: white;
-  font-size: 17px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: background 0.2s, transform 0.15s;
-}
-
-.chat-send:hover { background: var(--primary-hover); }
-.chat-send:active { transform: scale(0.9); }
-
-/* ═══════════════════════════════════════
-   EMPTY STATE
-═══════════════════════════════════════ */
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-  color: var(--text-muted);
-  grid-column: 1 / -1;
-}
-
-.empty-state .es-icon { font-size: 56px; margin-bottom: 16px; }
-.empty-state h3 { font-family: 'Sora', sans-serif; font-size: 18px; color: var(--text-sub); margin-bottom: 8px; }
-
-/* ═══════════════════════════════════════
-   RESPONSIVE
-═══════════════════════════════════════ */
-@media (max-width: 600px) {
-  .search-wrap { display: none; }
-  .location-chip { display: none; }
-  .food-grid { grid-template-columns: 1fr; gap: 16px; }
-  main { padding: 24px 16px 80px; }
-  .chat-window { width: calc(100vw - 32px); right: 16px; }
-  .hero-band { padding: 28px 20px; }
-  .modal-body { padding: 18px 18px 22px; }
-  .stats-grid { gap: 8px; }
-  .modal-title { font-size: 20px; }
-  .modal-hero { height: 180px; }
-}
-
-@media (max-width: 400px) {
-  .header-inner { padding: 0 14px; gap: 12px; }
-  .logo-text { font-size: 19px; }
+/* ── RESPONSIVE ── */
+@media(max-width:640px){
+  .search-wrap{display:none}
+  .location-chip{display:none}
+  .food-grid{grid-template-columns:1fr;gap:16px}
+  main{padding:24px 16px 80px}
+  .chat-window{width:calc(100vw - 32px);right:16px}
+  .hero-band{padding:28px 20px}
+  .modal-body{padding:16px 16px 22px}
+  .stats-grid{gap:8px}
+  .modal-hero{height:200px}
+  .modal-hero-name{font-size:17px}
+  .photo-gallery{grid-template-columns:1fr 1fr;grid-template-rows:110px 110px}
+  .photo-gallery .ph-img:first-child{grid-row:auto}
+  .modal-actions{flex-direction:column}
+  .btn-sec{height:44px}
+  .lb-nav{width:38px;height:38px;font-size:18px}
 }
 </style>
 </head>
 <body>
 
-<!-- ══ HEADER ══ -->
+<!-- HEADER -->
 <header>
   <div class="header-inner">
     <a class="logo" href="#">
@@ -992,34 +256,20 @@ main {
   </div>
 </header>
 
-<!-- ══ HERO ══ -->
+<!-- HERO -->
 <div class="hero-band">
   <h1>🍽️ Ẩm thực quanh FPT Đà Nẵng</h1>
-  <p>Khám phá các quán ăn ngon, giá sinh viên tại khu FPT City Ngũ Hành Sơn</p>
+  <p>Khám phá các quán ăn ngon, giá sinh viên tại khu FPT City & Ngũ Hành Sơn</p>
   <div class="hero-stats">
-    <div class="hero-stat">
-      <span class="hs-val">4</span>
-      <span class="hs-lbl">Quán gần đây</span>
-    </div>
-    <div class="hero-stat">
-      <span class="hs-val">4.45 ⭐</span>
-      <span class="hs-lbl">Đánh giá TB</span>
-    </div>
-    <div class="hero-stat">
-      <span class="hs-val">20k–40k</span>
-      <span class="hs-lbl">Khoảng giá</span>
-    </div>
-    <div class="hero-stat">
-      <span class="hs-val">&lt; 1.5 km</span>
-      <span class="hs-lbl">Khoảng cách</span>
-    </div>
+    <div class="hero-stat"><span class="hs-val">4</span><span class="hs-lbl">Quán gần đây</span></div>
+    <div class="hero-stat"><span class="hs-val">4.45 ⭐</span><span class="hs-lbl">Đánh giá TB</span></div>
+    <div class="hero-stat"><span class="hs-val">20k–45k</span><span class="hs-lbl">Khoảng giá</span></div>
+    <div class="hero-stat"><span class="hs-val">&lt;1.5 km</span><span class="hs-lbl">Khoảng cách</span></div>
   </div>
 </div>
 
-<!-- ══ MAIN ══ -->
+<!-- MAIN -->
 <main>
-
-  <!-- Filter tabs -->
   <div class="filter-row">
     <span class="filter-label">Lọc:</span>
     <button class="tab active" data-cat="all">🍴 Tất cả</button>
@@ -1028,55 +278,46 @@ main {
     <button class="tab" data-cat="do-uong">🧋 Đồ uống</button>
     <button class="tab" data-cat="banh-mi">🥖 Bánh mì</button>
   </div>
-
-  <!-- Section label -->
   <div class="section-label">
     <h2>🗺️ Danh sách quán ăn</h2>
     <span class="count-label" id="count-label">4 quán</span>
   </div>
-
-  <!-- Grid -->
   <div class="food-grid" id="food-grid"></div>
-
 </main>
 
-<!-- ══ MODAL ══ -->
+<!-- MODAL -->
 <div class="overlay" id="overlay">
   <div class="modal" id="modal" role="dialog" aria-modal="true">
     <div class="modal-hero" id="modal-hero">
+      <img id="modal-hero-img" src="" alt="">
+      <div class="modal-hero-overlay"></div>
       <button class="modal-close-btn" id="modal-close-btn" aria-label="Đóng">✕</button>
+      <div class="modal-hero-name" id="modal-hero-name"></div>
       <div class="modal-hero-tags" id="modal-hero-tags"></div>
     </div>
     <div class="modal-body">
-      <h2 class="modal-title" id="modal-name"></h2>
       <div class="modal-info-line"><span class="ico">📍</span><span id="modal-addr"></span></div>
       <div class="modal-info-line"><span class="ico">🕐</span><span id="modal-hours"></span></div>
       <div class="modal-info-line"><span class="ico">📞</span><span id="modal-phone"></span></div>
-
       <div class="stats-grid">
-        <div class="stat-box">
-          <span class="sv" id="modal-price-stat"></span>
-          <span class="sl">Giá TB / người</span>
-        </div>
-        <div class="stat-box">
-          <span class="sv" id="modal-rating-stat"></span>
-          <span class="sl">Sao Google Maps</span>
-        </div>
-        <div class="stat-box">
-          <span class="sv" id="modal-dist-stat"></span>
-          <span class="sl">Khoảng cách</span>
-        </div>
+        <div class="stat-box"><span class="sv" id="modal-price-stat"></span><span class="sl">Giá TB / người</span></div>
+        <div class="stat-box"><span class="sv" id="modal-rating-stat"></span><span class="sl">Sao Google Maps</span></div>
+        <div class="stat-box"><span class="sv" id="modal-dist-stat"></span><span class="sl">Khoảng cách</span></div>
       </div>
-
       <p class="modal-desc" id="modal-desc"></p>
+      <div class="modal-divider"></div>
+
+      <!-- PHOTO GALLERY -->
+      <div class="gallery-label">📸 Hình ảnh thực tế</div>
+      <div class="photo-gallery" id="photo-gallery"></div>
 
       <div class="modal-divider"></div>
 
+      <!-- MAP -->
       <div class="map-label">🗺️ Vị trí trên bản đồ</div>
       <div class="map-wrap">
         <iframe id="modal-map" allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Bản đồ quán ăn"></iframe>
       </div>
-
       <div class="modal-actions">
         <button class="btn-pri" id="btn-directions">📍 Chỉ đường Google Maps</button>
         <button class="btn-sec" id="btn-close-modal">Đóng</button>
@@ -1085,12 +326,19 @@ main {
   </div>
 </div>
 
-<!-- ══ CHATBOT ══ -->
-<button class="chat-fab" id="chat-fab" aria-label="Mở chatbot">
-  🤖
-  <span class="chat-notif-dot"></span>
-</button>
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" id="lb-close">✕</button>
+  <button class="lb-nav lb-prev" id="lb-prev">‹</button>
+  <img id="lb-img" src="" alt="">
+  <button class="lb-nav lb-next" id="lb-next">›</button>
+  <div class="lb-counter" id="lb-counter"></div>
+</div>
 
+<!-- CHATBOT FAB -->
+<button class="chat-fab" id="chat-fab" aria-label="Mở chatbot">
+  🤖<span class="chat-notif-dot"></span>
+</button>
 <div class="chat-window" id="chat-window" role="dialog" aria-label="FoodBot AI">
   <div class="chat-head">
     <div class="chat-avatar">🤖</div>
@@ -1098,50 +346,52 @@ main {
       <div class="chat-head-title">FoodBot AI</div>
       <div class="chat-head-sub">Trợ lý ẩm thực thông minh</div>
     </div>
-    <button class="chat-head-close" id="chat-close" aria-label="Đóng chat">✕</button>
+    <button class="chat-head-close" id="chat-close">✕</button>
   </div>
-
   <div class="chat-msgs" id="chat-msgs"></div>
-
   <div class="quick-chips" id="quick-chips">
     <button class="chip" data-q="Gợi ý quán cơm gà">🍗 Cơm gà</button>
     <button class="chip" data-q="Tôi muốn uống trà sữa">🧋 Trà sữa</button>
     <button class="chip" data-q="Quán nào rẻ nhất?">💰 Rẻ nhất</button>
     <button class="chip" data-q="Quán nào ngon nhất?">⭐ Ngon nhất</button>
   </div>
-
   <div class="chat-input-row">
     <input type="text" id="chat-input" placeholder="Nhập món bạn muốn ăn...">
     <button class="chat-send" id="chat-send" aria-label="Gửi">➤</button>
   </div>
 </div>
 
-<!-- ══ SCRIPT ══ -->
 <script>
-/* ===================================================
-   MOCK DATA – 4 quán gần FPT Đà Nẵng
-=================================================== */
+/* ================================================================
+   MOCK DATA – ảnh thực tế từ Unsplash (free, no auth needed)
+   Mỗi quán có: 1 ảnh bìa (coverImg) + mảng photos (gallery)
+   ĐỂ THAY ẢNH THẬT: đổi URL trong coverImg và photos[]
+================================================================ */
 const RESTAURANTS = [
   {
     id: 1,
-    name: 'Cơm gà A Tý',
-    address: 'Khu đô thị FPT City, Ngũ Hành Sơn, Đà Nẵng',
+    name: 'Mixue',
+    address: '67 Lê Thiện Trị, Ngũ Hành Sơn, Đà Nẵng',
     shortAddr: 'FPT City, Ngũ Hành Sơn',
-    price: '35.000đ',
-    priceNum: 35000,
-    rating: 4.5,
-    tags: ['Cơm gà', 'Quán cơm'],
-    categories: ['com'],
-    emoji: '🍗',
-    bg: 'linear-gradient(135deg,#FFE8CC 0%,#FFCF80 100%)',
+    price: '10k - 30k', priceNum: 35000, rating: 3,
+    tags: ['kem', 'đồ uống'],
+    categories: ['nuoc'],
+    // ── ẢNH BÌA (hiện trên card) ──
+    coverImg: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQpCSPfuSxpth6ltNTnfZ_583xzm2o2EXEHTA&s',
+    // ── GALLERY (hiện trong modal) ──
+    photos: [
+      './images/menu_mixue.jpg',
+      './images/menu_mixue.jpg',
+      './images/menu_mixue.jpg',
+      './images/menu_mixue.jpg',
+      './images/menu_mixue.jpg',
+    ],
     status: 'open',
-    hours: '06:00 – 21:00 (Hằng ngày)',
-    distance: '0.3 km',
-    phone: '0905 123 456',
-    mapLat: 16.0740,
-    mapLng: 108.2610,
-    mapLink: 'https://www.google.com/maps/search/?api=1&query=Com+ga+A+Ty+FPT+City+Da+Nang',
-    desc: 'Cơm gà giòn da, cơm vàng ươm nấu bằng nước hầm xương gà, hành phi thơm phức. Nổi tiếng trong khu FPT City với giá cả bình dân phù hợp sinh viên. Có chỗ để xe rộng rãi.',
+    hours: '08:00 – 22:30 (Hằng ngày)',
+    distance: '2.4 km', phone: 'None',
+    mapLat: 15.978792628334535, mapLng: 108.25026628356206,
+    mapLink: 'https://maps.app.goo.gl/BggdbFtj9vo7W6db9?g_st=ic',
+    desc: 'Cơm gà giòn da, cơm vàng ươm nấu bằng nước hầm xương gà, hành phi thơm phức. Nổi tiếng trong khu FPT City với giá cả bình dân phù hợp sinh viên.',
     keywords: ['cơm gà','cơm','gà','com ga','com','ga']
   },
   {
@@ -1149,21 +399,23 @@ const RESTAURANTS = [
     name: 'Trà sữa Ông Địa',
     address: '192 Nguyễn Văn Thoại, Ngũ Hành Sơn, Đà Nẵng',
     shortAddr: '192 Nguyễn Văn Thoại',
-    price: '25.000đ',
-    priceNum: 25000,
-    rating: 4.3,
+    price: '25.000đ', priceNum: 25000, rating: 4.3,
     tags: ['Trà sữa', 'Đồ uống'],
     categories: ['do-uong'],
-    emoji: '🧋',
-    bg: 'linear-gradient(135deg,#DBEAFE 0%,#93C5FD 100%)',
+    coverImg: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80',
+    photos: [
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
+      'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=400&q=80',
+      'https://images.unsplash.com/photo-1541167760496-1628856ab772?w=400&q=80',
+      'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=400&q=80',
+      'https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=400&q=80'
+    ],
     status: 'open',
     hours: '09:00 – 23:00 (Hằng ngày)',
-    distance: '0.8 km',
-    phone: '0912 345 678',
-    mapLat: 16.0685,
-    mapLng: 108.2575,
+    distance: '0.8 km', phone: '0912 345 678',
+    mapLat: 16.0685, mapLng: 108.2575,
     mapLink: 'https://www.google.com/maps/search/?api=1&query=192+Nguyen+Van+Thoai+Ngu+Hanh+Son+Da+Nang',
-    desc: 'Trà sữa đa vị từ truyền thống đến hiện đại, topping phong phú: trân châu, thạch, pudding, hồng trà kem. Không gian máy lạnh mát mẻ, wifi miễn phí, lý tưởng để học nhóm.',
+    desc: 'Trà sữa đa vị từ truyền thống đến hiện đại, topping phong phú: trân châu, thạch, pudding, hồng trà kem. Không gian máy lạnh mát mẻ, wifi miễn phí.',
     keywords: ['trà sữa','trà','sữa','milk tea','bubble tea','uống','nước','tra sua']
   },
   {
@@ -1171,21 +423,23 @@ const RESTAURANTS = [
     name: 'Bún bò Huế Cô Ba',
     address: '25 Đường Trường Sa, Ngũ Hành Sơn, Đà Nẵng',
     shortAddr: '25 Trường Sa, Ngũ Hành Sơn',
-    price: '40.000đ',
-    priceNum: 40000,
-    rating: 4.6,
+    price: '40.000đ', priceNum: 40000, rating: 4.6,
     tags: ['Bún bò', 'Đặc sản'],
     categories: ['bun'],
-    emoji: '🍲',
-    bg: 'linear-gradient(135deg,#FCE4EC 0%,#F48FB1 100%)',
+    coverImg: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=600&q=80',
+    photos: [
+      'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=800&q=80',
+      'https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=400&q=80',
+      'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400&q=80',
+      'https://images.unsplash.com/photo-1555126634-323283e090fa?w=400&q=80',
+      'https://images.unsplash.com/photo-1600891964092-4316c288032e?w=400&q=80'
+    ],
     status: 'open',
     hours: '06:30 – 11:00 · 17:00 – 20:30',
-    distance: '1.2 km',
-    phone: '0898 765 432',
-    mapLat: 16.0760,
-    mapLng: 108.2580,
+    distance: '1.2 km', phone: '0898 765 432',
+    mapLat: 16.0760, mapLng: 108.2580,
     mapLink: 'https://www.google.com/maps/search/?api=1&query=Bun+bo+Hue+Truong+Sa+Ngu+Hanh+Son+Da+Nang',
-    desc: 'Bún bò Huế chuẩn vị cố đô – nước dùng đỏ au đậm đà sả ớt, thịt bò thăn mềm, chả bò, chả tôm thơm. Quán mở từ sáng sớm, thường hết hàng trước 10h nên đến sớm nhé!',
+    desc: 'Bún bò Huế chuẩn vị cố đô – nước dùng đỏ au đậm đà sả ớt, thịt bò thăn mềm, chả bò, chả tôm thơm. Quán mở từ sáng sớm, thường hết trước 10h!',
     keywords: ['bún bò','bún','bò','huế','bun bo','bun']
   },
   {
@@ -1193,42 +447,46 @@ const RESTAURANTS = [
     name: 'Bánh mì Hội An 38',
     address: 'K303 Khu đô thị FPT City, Đà Nẵng',
     shortAddr: 'FPT City, Đà Nẵng',
-    price: '20.000đ',
-    priceNum: 20000,
-    rating: 4.4,
+    price: '20.000đ', priceNum: 20000, rating: 4.4,
     tags: ['Bánh mì', 'Ăn sáng'],
     categories: ['banh-mi'],
-    emoji: '🥖',
-    bg: 'linear-gradient(135deg,#EDE9FE 0%,#C4B5FD 100%)',
+    coverImg: 'https://images.unsplash.com/photo-1509722747041-616f39b57569?w=600&q=80',
+    photos: [
+      'https://images.unsplash.com/photo-1509722747041-616f39b57569?w=800&q=80',
+      'https://images.unsplash.com/photo-1565299507177-b0ac66763828?w=400&q=80',
+      'https://images.unsplash.com/photo-1585478259715-4d3f4c8b6d66?w=400&q=80',
+      'https://images.unsplash.com/photo-1606755456206-b25206cde27e?w=400&q=80',
+      'https://images.unsplash.com/photo-1528736235302-52922df5c122?w=400&q=80'
+    ],
     status: 'closed',
     hours: '06:00 – 10:30 (Hằng ngày)',
-    distance: '0.5 km',
-    phone: '0777 654 321',
-    mapLat: 16.0720,
-    mapLng: 108.2625,
+    distance: '0.5 km', phone: '0777 654 321',
+    mapLat: 16.0720, mapLng: 108.2625,
     mapLink: 'https://www.google.com/maps/search/?api=1&query=Banh+mi+FPT+City+Da+Nang',
-    desc: 'Bánh mì vỏ ngoài giòn tan, nhân bên trong phong phú: pa-tê Hội An, thịt nướng, rau sống tươi. Chi nhánh từ thương hiệu bánh mì nổi tiếng Hội An, giá cực kỳ sinh viên chỉ 20k.',
+    desc: 'Bánh mì vỏ ngoài giòn tan, nhân phong phú: pa-tê Hội An, thịt nướng, rau sống tươi. Giá chỉ 20k – rẻ nhất khu vực FPT!',
     keywords: ['bánh mì','bánh','mì','banh mi','sáng','ăn sáng']
   }
 ];
 
-/* ===================================================
+/* ================================================================
    STATE
-=================================================== */
+================================================================ */
 let viewed = new Set();
 let currentRest = null;
 let chatOpen = false;
 let currentFilter = 'all';
 let searchQuery = '';
 
-/* ===================================================
-   RENDER
-=================================================== */
+// Lightbox state
+let lbPhotos = [];
+let lbIndex = 0;
+
+/* ================================================================
+   RENDER CARDS
+================================================================ */
 function getFiltered() {
   let data = RESTAURANTS;
-  if (currentFilter !== 'all') {
-    data = data.filter(r => r.categories.includes(currentFilter));
-  }
+  if (currentFilter !== 'all') data = data.filter(r => r.categories.includes(currentFilter));
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
     data = data.filter(r =>
@@ -1244,32 +502,25 @@ function getFiltered() {
 function renderCards() {
   const grid = document.getElementById('food-grid');
   const data = getFiltered();
-
   document.getElementById('count-label').textContent = data.length + ' quán';
 
-  if (data.length === 0) {
-    grid.innerHTML = `
-      <div class="empty-state">
-        <div class="es-icon">🔍</div>
-        <h3>Không tìm thấy quán nào</h3>
-        <p>Thử tìm kiếm với từ khoá khác nhé!</p>
-      </div>`;
+  if (!data.length) {
+    grid.innerHTML = `<div class="empty-state"><div class="es-icon">🔍</div><h3>Không tìm thấy quán nào</h3><p>Thử tìm kiếm với từ khoá khác nhé!</p></div>`;
     return;
   }
 
   grid.innerHTML = '';
   data.forEach((r, i) => {
-    const isViewed = viewed.has(r.id);
     const isOpen = r.status === 'open';
-
     const card = document.createElement('div');
-    card.className = 'food-card' + (isViewed ? ' viewed' : '');
+    card.className = 'food-card' + (viewed.has(r.id) ? ' viewed' : '');
     card.dataset.id = r.id;
     card.style.animationDelay = (i * 0.07) + 's';
-
     card.innerHTML = `
-      <div class="card-img" style="background:${r.bg}">
-        ${r.emoji}
+      <div class="card-img">
+        <img src="${r.coverImg}" alt="${r.name}" loading="lazy"
+          onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&q=80'">
+        <div class="card-img-overlay"></div>
         <div class="card-tags-row">
           <span class="ctag ctag-a">${r.tags[0]}</span>
           <span class="ctag ctag-b">${r.tags[1]}</span>
@@ -1278,30 +529,26 @@ function renderCards() {
       </div>
       <div class="card-body">
         <div class="card-name">${r.name}</div>
-        <div class="card-addr">
-          <span class="pin">📍</span>
-          <span>${r.address}</span>
-        </div>
+        <div class="card-addr"><span class="pin">📍</span><span>${r.address}</span></div>
         <div class="card-footer">
           <span class="card-price">💵 ${r.price}</span>
           <div class="card-right-col">
             <span class="card-rating">⭐ ${r.rating}</span>
-            <span class="card-status ${isOpen ? 'status-open' : 'status-closed'}">
-              <span class="dot ${isOpen ? 'dot-open' : 'dot-closed'}"></span>
-              ${isOpen ? 'Đang mở cửa' : 'Đã đóng cửa'}
+            <span class="card-status ${isOpen?'status-open':'status-closed'}">
+              <span class="dot ${isOpen?'dot-open':'dot-closed'}"></span>
+              ${isOpen?'Đang mở cửa':'Đã đóng cửa'}
             </span>
           </div>
         </div>
-      </div>
-    `;
+      </div>`;
     card.addEventListener('click', () => openModal(r));
     grid.appendChild(card);
   });
 }
 
-/* ===================================================
+/* ================================================================
    FILTER + SEARCH
-=================================================== */
+================================================================ */
 document.querySelectorAll('.tab').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -1310,59 +557,77 @@ document.querySelectorAll('.tab').forEach(btn => {
     renderCards();
   });
 });
-
 document.getElementById('search-input').addEventListener('input', e => {
   searchQuery = e.target.value.trim();
   renderCards();
 });
 
-/* ===================================================
+/* ================================================================
    MODAL
-=================================================== */
+================================================================ */
 function openModal(r) {
   currentRest = r;
-
-  // Mark viewed
   viewed.add(r.id);
-  document.querySelectorAll('.food-card').forEach(card => {
-    if (parseInt(card.dataset.id) === r.id) card.classList.add('viewed');
+  document.querySelectorAll('.food-card').forEach(c => {
+    if (parseInt(c.dataset.id) === r.id) c.classList.add('viewed');
   });
   updateViewedBadge();
 
-  // Populate
-  const hero = document.getElementById('modal-hero');
-  hero.style.background = r.bg;
-  hero.style.fontSize = '96px';
-  // Set emoji via text node inside (remove previous emojis)
-  const existingEmoji = hero.querySelector('.hero-emoji');
-  if (existingEmoji) existingEmoji.remove();
-  const emojiEl = document.createElement('span');
-  emojiEl.className = 'hero-emoji';
-  emojiEl.textContent = r.emoji;
-  hero.insertBefore(emojiEl, hero.firstChild);
+  // Hero image
+  document.getElementById('modal-hero-img').src = r.coverImg;
+  document.getElementById('modal-hero-img').alt = r.name;
+  document.getElementById('modal-hero-name').textContent = r.name;
+  document.getElementById('modal-hero-tags').innerHTML =
+    r.tags.map((t, i) => `<span class="ctag ${i===0?'ctag-a':'ctag-b'}">${t}</span>`).join('');
 
-  document.getElementById('modal-name').textContent = r.name;
+  // Info
   document.getElementById('modal-addr').textContent = r.address;
-  document.getElementById('modal-desc').textContent = r.desc;
   document.getElementById('modal-phone').textContent = r.phone;
   document.getElementById('modal-price-stat').textContent = r.price;
   document.getElementById('modal-rating-stat').textContent = r.rating + ' ⭐';
   document.getElementById('modal-dist-stat').textContent = r.distance;
+  document.getElementById('modal-desc').textContent = r.desc;
 
   const isOpen = r.status === 'open';
   document.getElementById('modal-hours').innerHTML =
-    `<span style="color:${isOpen ? '#16A34A' : '#DC2626'}; font-weight:700">` +
-    `${isOpen ? '🟢 Đang mở' : '🔴 Đóng cửa'}</span> · ${r.hours}`;
+    `<span style="color:${isOpen?'#16A34A':'#DC2626'};font-weight:700">${isOpen?'🟢 Đang mở':'🔴 Đóng cửa'}</span> · ${r.hours}`;
 
-  document.getElementById('modal-hero-tags').innerHTML =
-    r.tags.map((t, i) => `<span class="ctag ${i===0?'ctag-a':'ctag-b'}">${t}</span>`).join('');
+  // Gallery
+  renderGallery(r.photos);
 
-  // Google Maps embed
-  const src = `https://maps.google.com/maps?q=${r.mapLat},${r.mapLng}&t=&z=17&ie=UTF8&iwloc=&output=embed`;
-  document.getElementById('modal-map').src = src;
+  // Map
+  document.getElementById('modal-map').src =
+    `https://maps.google.com/maps?q=${r.mapLat},${r.mapLng}&t=&z=17&ie=UTF8&iwloc=&output=embed`;
 
   document.getElementById('overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
+}
+
+function renderGallery(photos) {
+  const gallery = document.getElementById('photo-gallery');
+  gallery.innerHTML = '';
+  const show = photos.slice(0, 5);
+  show.forEach((url, idx) => {
+    const div = document.createElement('div');
+    div.className = 'ph-img';
+    const img = document.createElement('img');
+    img.src = url;
+    img.alt = 'Ảnh ' + (idx + 1);
+    img.loading = 'lazy';
+    img.onerror = () => { img.src = 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&q=80'; };
+    div.appendChild(img);
+
+    // "+N more" overlay on last cell if extra photos exist
+    if (idx === 4 && photos.length > 5) {
+      const ov = document.createElement('div');
+      ov.className = 'ph-more-overlay';
+      ov.textContent = '+' + (photos.length - 5);
+      div.appendChild(ov);
+    }
+
+    div.addEventListener('click', () => openLightbox(photos, idx));
+    gallery.appendChild(div);
+  });
 }
 
 function closeModal() {
@@ -1374,49 +639,67 @@ function closeModal() {
 document.getElementById('overlay').addEventListener('click', e => {
   if (e.target === document.getElementById('overlay')) closeModal();
 });
-
 document.getElementById('modal-close-btn').addEventListener('click', closeModal);
 document.getElementById('btn-close-modal').addEventListener('click', closeModal);
-
 document.getElementById('btn-directions').addEventListener('click', () => {
   if (currentRest) window.open(currentRest.mapLink, '_blank');
 });
-
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeModal();
+  if (e.key === 'Escape') { closeModal(); closeLightbox(); }
+  if (e.key === 'ArrowRight') lbNext();
+  if (e.key === 'ArrowLeft')  lbPrev();
 });
 
 function updateViewedBadge() {
-  const badge = document.getElementById('viewed-badge');
-  badge.textContent = viewed.size + ' Đã xem';
+  document.getElementById('viewed-badge').textContent = viewed.size + ' Đã xem';
 }
 
-/* ===================================================
-   CHATBOT
-=================================================== */
-function toggleChat(forceOpen) {
-  chatOpen = forceOpen !== undefined ? forceOpen : !chatOpen;
-  document.getElementById('chat-window').classList.toggle('open', chatOpen);
+/* ================================================================
+   LIGHTBOX
+================================================================ */
+function openLightbox(photos, idx) {
+  lbPhotos = photos;
+  lbIndex = idx;
+  renderLb();
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
+function renderLb() {
+  document.getElementById('lb-img').src = lbPhotos[lbIndex];
+  document.getElementById('lb-counter').textContent = (lbIndex + 1) + ' / ' + lbPhotos.length;
+  document.getElementById('lb-prev').style.opacity = lbIndex === 0 ? '0.3' : '1';
+  document.getElementById('lb-next').style.opacity = lbIndex === lbPhotos.length - 1 ? '0.3' : '1';
+}
+function lbNext() { if (lbIndex < lbPhotos.length - 1) { lbIndex++; renderLb(); } }
+function lbPrev() { if (lbIndex > 0) { lbIndex--; renderLb(); } }
 
+document.getElementById('lb-close').addEventListener('click', closeLightbox);
+document.getElementById('lb-next').addEventListener('click', lbNext);
+document.getElementById('lb-prev').addEventListener('click', lbPrev);
+document.getElementById('lightbox').addEventListener('click', e => {
+  if (e.target === document.getElementById('lightbox') || e.target === document.getElementById('lb-img')) closeLightbox();
+});
+
+/* ================================================================
+   CHATBOT
+================================================================ */
+function toggleChat(v) {
+  chatOpen = v !== undefined ? v : !chatOpen;
+  document.getElementById('chat-window').classList.toggle('open', chatOpen);
   if (chatOpen && document.getElementById('chat-msgs').children.length === 0) {
-    setTimeout(() => {
-      addBotMsg('👋 Xin chào! Mình là <b>FoodBot AI</b> – trợ lý ẩm thực của bạn tại FPT Đà Nẵng! 😋<br><br>Bạn đang thèm ăn gì? Nhập tên món hoặc nhấn các gợi ý bên dưới nhé!');
-    }, 200);
+    setTimeout(() => addBotMsg('👋 Xin chào! Mình là <b>FoodBot AI</b> – trợ lý ẩm thực của bạn tại FPT Đà Nẵng! 😋<br><br>Bạn đang thèm ăn gì? Nhập tên món hoặc nhấn gợi ý bên dưới nhé!'), 200);
   }
 }
 
 document.getElementById('chat-fab').addEventListener('click', () => toggleChat());
 document.getElementById('chat-close').addEventListener('click', () => toggleChat(false));
-
 document.querySelectorAll('.chip').forEach(chip => {
   chip.addEventListener('click', () => {
-    const q = chip.dataset.q;
-    addUserMsg(q);
+    addUserMsg(chip.dataset.q);
     showTyping();
-    setTimeout(() => {
-      removeTyping();
-      addBotMsg(getBotReply(q.toLowerCase()));
-    }, 800 + Math.random() * 400);
+    setTimeout(() => { removeTyping(); addBotMsg(getBotReply(chip.dataset.q.toLowerCase())); }, 700 + Math.random() * 400);
   });
 });
 
@@ -1428,7 +711,6 @@ function addBotMsg(html) {
   msgs.appendChild(el);
   msgs.scrollTop = msgs.scrollHeight;
 }
-
 function addUserMsg(text) {
   const msgs = document.getElementById('chat-msgs');
   const el = document.createElement('div');
@@ -1437,21 +719,15 @@ function addUserMsg(text) {
   msgs.appendChild(el);
   msgs.scrollTop = msgs.scrollHeight;
 }
-
 function showTyping() {
   const msgs = document.getElementById('chat-msgs');
   const el = document.createElement('div');
-  el.className = 'typing-wrap';
-  el.id = 'typing';
+  el.className = 'typing-wrap'; el.id = 'typing';
   el.innerHTML = '<div class="tdot"></div><div class="tdot"></div><div class="tdot"></div>';
   msgs.appendChild(el);
   msgs.scrollTop = msgs.scrollHeight;
 }
-
-function removeTyping() {
-  const t = document.getElementById('typing');
-  if (t) t.remove();
-}
+function removeTyping() { const t = document.getElementById('typing'); if (t) t.remove(); }
 
 function sendChat() {
   const input = document.getElementById('chat-input');
@@ -1460,104 +736,40 @@ function sendChat() {
   addUserMsg(text);
   input.value = '';
   showTyping();
-  setTimeout(() => {
-    removeTyping();
-    addBotMsg(getBotReply(text.toLowerCase()));
-  }, 800 + Math.random() * 500);
+  setTimeout(() => { removeTyping(); addBotMsg(getBotReply(text.toLowerCase())); }, 700 + Math.random() * 500);
 }
-
 document.getElementById('chat-send').addEventListener('click', sendChat);
-document.getElementById('chat-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') sendChat();
-});
+document.getElementById('chat-input').addEventListener('keydown', e => { if (e.key === 'Enter') sendChat(); });
 
-/* ===================================================
-   BOT REPLY LOGIC
-=================================================== */
-const GREETS = ['xin chào','hello','hi','chào','alo','hey','yo'];
-const CHEAP_KW  = ['rẻ','rẻ nhất','bình dân','tiết kiệm','ít tiền','sinh viên'];
-const BEST_KW   = ['ngon','ngon nhất','tốt nhất','rating cao','nhiều sao','sao cao'];
-const ALL_KW    = ['tất cả','hết','liệt kê','danh sách','quán nào','có gì','show all'];
-const HELP_KW   = ['giúp','help','hướng dẫn','làm gì','bạn là ai'];
-
+/* ── BOT REPLY ── */
 function getBotReply(text) {
-  // Greeting
-  if (GREETS.some(g => text.includes(g))) {
-    return '👋 Xin chào bạn! Mình có thể giúp tìm quán ăn theo món bạn thích. Thử hỏi: <b>"tôi muốn ăn cơm gà"</b> hay <b>"quán nào rẻ nhất?"</b> nhé! 🍽️';
+  if (['xin chào','hello','hi','chào','alo','hey'].some(g => text.includes(g)))
+    return '👋 Xin chào! Hỏi mình về bất kỳ món ăn nào để tìm quán nhé! 🍽️';
+  if (['rẻ','rẻ nhất','bình dân','tiết kiệm'].some(k => text.includes(k))) {
+    const top = [...RESTAURANTS].sort((a,b) => a.priceNum - b.priceNum).slice(0,2);
+    return '💰 <b>Top quán giá rẻ:</b><br><br>' + top.map(q => `${q.name} – ${q.price}`).join('<br>');
   }
-
-  // Help
-  if (HELP_KW.some(k => text.includes(k))) {
-    return '🤖 Mình là <b>FoodBot</b>, trợ lý tìm quán ăn gần FPT Đà Nẵng!<br><br>Bạn có thể hỏi mình về:<br>🍗 <b>Cơm gà</b> – Cơm bún các loại<br>🧋 <b>Trà sữa</b> – Đồ uống<br>🍲 <b>Bún bò</b> – Bún các loại<br>🥖 <b>Bánh mì</b> – Ăn sáng<br>💰 Quán rẻ nhất / ⭐ Ngon nhất';
+  if (['ngon','ngon nhất','rating cao','nhiều sao'].some(k => text.includes(k))) {
+    const top = [...RESTAURANTS].sort((a,b) => b.rating - a.rating)[0];
+    return `⭐ Quán được đánh giá cao nhất: <b>${top.name}</b><br>⭐ ${top.rating}/5 · ${top.price}`;
   }
-
-  // Cheapest
-  if (CHEAP_KW.some(k => text.includes(k))) {
-    const sorted = [...RESTAURANTS].sort((a, b) => a.priceNum - b.priceNum).slice(0, 2);
-    let r = '💰 <b>Top quán giá rẻ nhất</b> phù hợp túi sinh viên:<br><br>';
-    sorted.forEach(q => {
-      r += `${q.emoji} <b>${q.name}</b><br>📍 ${q.shortAddr}<br>💵 ${q.price} · ⭐ ${q.rating}<br><br>`;
-    });
-    r += '🎓 Tiết kiệm mà vẫn ngon!';
-    return r;
+  if (['tất cả','danh sách','quán nào','liệt kê'].some(k => text.includes(k))) {
+    return '🗺️ <b>Tất cả quán gần FPT:</b><br><br>' +
+      RESTAURANTS.map(q => `${q.name} – ${q.price} (⭐${q.rating})`).join('<br>');
   }
-
-  // Best rating
-  if (BEST_KW.some(k => text.includes(k))) {
-    const top = [...RESTAURANTS].sort((a, b) => b.rating - a.rating)[0];
-    return `⭐ <b>Quán được đánh giá cao nhất</b> là:<br><br>${top.emoji} <b>${top.name}</b><br>📍 ${top.shortAddr}<br>💵 ${top.price} · ⭐ ${top.rating}/5 trên Google Maps<br>${top.status === 'open' ? '🟢 Đang mở cửa' : '🔴 Đóng cửa'}<br><br>Click vào card để xem chi tiết nhé!`;
+  const matched = RESTAURANTS.filter(r => r.keywords.some(k => text.includes(k)));
+  if (matched.length) {
+    return `🍽️ Tìm thấy <b>${matched.length} quán</b>:<br><br>` +
+      matched.map(q => {
+        const open = q.status === 'open';
+        return `${q.name}<br>📍 ${q.shortAddr} · 💵 ${q.price} · ⭐${q.rating}<br>` +
+          `<span style="color:${open?'#16A34A':'#DC2626'};font-weight:700">${open?'🟢 Mở':'🔴 Đóng'}</span>`;
+      }).join('<br><br>') + '<br><br>💡 <i>Click card để xem bản đồ & ảnh!</i>';
   }
-
-  // All restaurants
-  if (ALL_KW.some(k => text.includes(k))) {
-    let r = '🗺️ <b>Tất cả quán ăn gần FPT Đà Nẵng:</b><br><br>';
-    RESTAURANTS.forEach(q => {
-      r += `${q.emoji} <b>${q.name}</b> – ${q.price} (⭐${q.rating})<br>`;
-    });
-    r += '<br>Click vào card để xem bản đồ & chi tiết!';
-    return r;
-  }
-
-  // Match by food keywords
-  let matched = [];
-  RESTAURANTS.forEach(r => {
-    if (r.keywords.some(k => text.includes(k))) matched.push(r);
-  });
-
-  if (matched.length > 0) {
-    let reply = `🍽️ Tìm thấy <b>${matched.length} quán</b> phù hợp với bạn:<br><br>`;
-    matched.forEach(q => {
-      const open = q.status === 'open';
-      reply += `${q.emoji} <b>${q.name}</b><br>`;
-      reply += `📍 ${q.shortAddr}<br>`;
-      reply += `💵 ${q.price} · ⭐ ${q.rating} · `;
-      reply += `<span style="color:${open?'#16A34A':'#DC2626'};font-weight:700">${open?'🟢 Mở cửa':'🔴 Đóng cửa'}</span><br><br>`;
-    });
-    reply += '💡 <i>Click vào card để xem bản đồ!</i>';
-    return reply;
-  }
-
-  // Open restaurants
-  if (text.includes('mở') || text.includes('đang mở') || text.includes('open')) {
-    const opens = RESTAURANTS.filter(r => r.status === 'open');
-    let r = `🟢 Hiện có <b>${opens.length} quán đang mở cửa</b>:<br><br>`;
-    opens.forEach(q => r += `${q.emoji} <b>${q.name}</b> – ${q.hours}<br>`);
-    return r;
-  }
-
-  // Distance
-  if (text.includes('gần') || text.includes('gần nhất') || text.includes('khoảng cách')) {
-    const nearest = [...RESTAURANTS].sort((a,b) => parseFloat(a.distance) - parseFloat(b.distance))[0];
-    return `📍 Quán <b>gần FPT nhất</b> là:<br><br>${nearest.emoji} <b>${nearest.name}</b><br>📍 ${nearest.shortAddr}<br>🚶 Chỉ cách <b>${nearest.distance}</b> thôi!`;
-  }
-
-  // Fallback
-  return '😅 Mình chưa hiểu ý bạn lắm! Thử hỏi:<br><br>🍗 <b>"Tôi muốn ăn cơm gà"</b><br>🧋 <b>"Thèm trà sữa"</b><br>💰 <b>"Quán nào rẻ nhất?"</b><br>⭐ <b>"Quán nào ngon nhất?"</b>';
+  return '😅 Mình chưa hiểu ý bạn! Thử: <b>"cơm gà"</b>, <b>"trà sữa"</b>, <b>"rẻ nhất"</b>, <b>"ngon nhất"</b>';
 }
 
-/* ===================================================
-   INIT
-=================================================== */
+/* ── INIT ── */
 renderCards();
 </script>
 </body>
