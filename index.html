@@ -293,6 +293,26 @@ main{max-width:1200px;margin:0 auto;padding:32px 24px 80px}
   font-size: 13px; font-weight: 700; color: #92400E;
 }
 .review-loading { text-align: center; padding: 16px; color: var(--text-muted); font-size: 13px; }
+/* ── ADMIN ── */
+.admin-bar {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 14px;
+}
+.btn-admin-login {
+  padding: 6px 14px; border-radius: 20px; font-size: 12px;
+  font-weight: 700; cursor: pointer; border: 1.5px solid var(--border);
+  background: white; color: var(--text-sub); font-family: 'Nunito', sans-serif;
+  transition: all .2s;
+}
+.btn-admin-login:hover { border-color: var(--primary); color: var(--primary); }
+.btn-admin-login.active { background: #EF4444; color: white; border-color: #EF4444; }
+.btn-delete-review {
+  margin-left: auto; background: none; border: none;
+  color: #EF4444; font-size: 13px; cursor: pointer;
+  font-weight: 700; padding: 2px 8px; border-radius: 6px;
+  transition: background .2s; flex-shrink: 0;
+}
+.btn-delete-review:hover { background: #FEE2E2; }
 </style>
 </head>
 <body>
@@ -386,6 +406,12 @@ main{max-width:1200px;margin:0 auto;padding:32px 24px 80px}
 <div class="modal-divider"></div>
 <div class="review-section">
   <div class="review-title">💬 Đánh giá từ cộng đồng</div>
+  <!-- THÊM VÀO ĐÂY ↓ -->
+<div class="admin-bar">
+  <button class="btn-admin-login" id="btn-admin-login" onclick="toggleAdmin()">
+    🔐 Đăng nhập Admin
+  </button>
+</div>
   <div id="review-avg-wrap"></div>
 
   <!-- Form viết review -->
@@ -969,14 +995,17 @@ renderCards();
 
       // Render danh sách
       list.innerHTML = reviews.map(r => `
-        <div class="review-item">
-          <div class="review-item-top">
-            <span class="review-item-name">👤 ${r.name || 'Ẩn danh'}</span>
-            <span class="review-item-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span>
-          </div>
-          <div class="review-item-date">${r.date || ''}</div>
-          <div class="review-item-comment">${r.comment || ''}</div>
-        </div>`).join('');
+  <div class="review-item">
+    <div class="review-item-top">
+      <span class="review-item-name">👤 ${r.name || 'Ẩn danh'}</span>
+      <span class="review-item-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span>
+      ${window.isAdmin
+        ? `<button class="btn-delete-review" onclick="deleteReview('${r.id}', ${window._currentRestId})">🗑️ Xóa</button>`
+        : ''}
+    </div>
+    <div class="review-item-date">${r.date || ''}</div>
+    <div class="review-item-comment">${r.comment || ''}</div>
+  </div>`).join('');
     });
   };
 
@@ -1016,6 +1045,39 @@ renderCards();
       btn.textContent = 'Gửi đánh giá 🚀';
     }
   };
+  /* ── ADMIN ── */
+const ADMIN_PASSWORD = 'Huy2007@'; // ← ĐỔI MẬT KHẨU Ở ĐÂY
+let isAdmin = false;
+
+function toggleAdmin() {
+  if (isAdmin) {
+    // Đang là admin → đăng xuất
+    isAdmin = false;
+    document.getElementById('btn-admin-login').textContent = '🔐 Đăng nhập Admin';
+    document.getElementById('btn-admin-login').classList.remove('active');
+    renderCards(); // re-render để ẩn nút xóa
+    return;
+  }
+  const pw = prompt('🔐 Nhập mật khẩu Admin:');
+  if (pw === ADMIN_PASSWORD) {
+    isAdmin = true;
+    document.getElementById('btn-admin-login').textContent = '✅ Admin • Đăng xuất';
+    document.getElementById('btn-admin-login').classList.add('active');
+    alert('✅ Đăng nhập thành công!');
+  } else if (pw !== null) {
+    alert('❌ Sai mật khẩu!');
+  }
+}
+import { deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
+
+window.deleteReview = async function(reviewId, restaurantId) {
+  if (!confirm('🗑️ Xóa đánh giá này?')) return;
+  try {
+    await deleteDoc(doc(db, 'reviews_' + restaurantId, reviewId));
+  } catch(e) {
+    alert('❌ Lỗi: ' + e.message);
+  }
+};
 </script>
 </body>
 </html>
