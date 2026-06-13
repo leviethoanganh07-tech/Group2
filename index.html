@@ -945,25 +945,22 @@ renderCards();
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
   import { getFirestore, collection, addDoc, query, orderBy,
-           onSnapshot, serverTimestamp }
+           onSnapshot, serverTimestamp, deleteDoc, doc }
     from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
-  // ✏️ THAY BẰNG CONFIG CỦA BẠN (copy từ Firebase console)
   const firebaseConfig = {
-  apiKey: "AIzaSyAUzMd29DIBteeEU5sqxl0swsK2wDBjyKI",
-  authDomain: "foodmap-5d6e0.firebaseapp.com",
-  projectId: "foodmap-5d6e0",
-  storageBucket: "foodmap-5d6e0.firebasestorage.app",
-  messagingSenderId: "824974818462",
-  appId: "1:824974818462:web:d27add6c61644e7f664f8f"
-};
+    apiKey: "AIzaSyAUzMd29DIBteeEU5sqxl0swsK2wDBjyKI",
+    authDomain: "foodmap-5d6e0.firebaseapp.com",
+    projectId: "foodmap-5d6e0",
+    storageBucket: "foodmap-5d6e0.firebasestorage.app",
+    messagingSenderId: "824974818462",
+    appId: "1:824974818462:web:d27add6c61644e7f664f8f"
+  };
 
   const app = initializeApp(firebaseConfig);
   const db  = getFirestore(app);
+  let unsubscribe = null;
 
-  let unsubscribe = null; // để hủy listener khi đóng modal
-
-  // Gán lên window để các hàm khác gọi được
   window._db = db;
   window._collection = collection;
   window._addDoc = addDoc;
@@ -972,9 +969,41 @@ renderCards();
   window._onSnapshot = onSnapshot;
   window._serverTimestamp = serverTimestamp;
 
-  // Load review khi mở modal
+  /* ── ADMIN ── */
+  const ADMIN_PASSWORD = 'Huy2007@';
+  window.isAdmin = false;
+
+  window.toggleAdmin = function() {
+    if (window.isAdmin) {
+      window.isAdmin = false;
+      document.getElementById('btn-admin-login').textContent = '🔐 Đăng nhập Admin';
+      document.getElementById('btn-admin-login').classList.remove('active');
+      loadReviews(window._currentRestId);
+      return;
+    }
+    const pw = prompt('🔐 Nhập mật khẩu Admin:');
+    if (pw === ADMIN_PASSWORD) {
+      window.isAdmin = true;
+      document.getElementById('btn-admin-login').textContent = '✅ Admin • Đăng xuất';
+      document.getElementById('btn-admin-login').classList.add('active');
+      alert('✅ Đăng nhập thành công!');
+      loadReviews(window._currentRestId);
+    } else if (pw !== null) {
+      alert('❌ Sai mật khẩu!');
+    }
+  };
+
+  window.deleteReview = async function(reviewId, restaurantId) {
+    if (!confirm('🗑️ Xóa đánh giá này?')) return;
+    try {
+      await deleteDoc(doc(db, 'reviews_' + restaurantId, reviewId));
+    } catch(e) {
+      alert('❌ Lỗi: ' + e.message);
+    }
+  };
+
   window.loadReviews = function(restaurantId) {
-    if (unsubscribe) unsubscribe(); // hủy listener cũ
+    if (unsubscribe) unsubscribe();
     const q = query(
       collection(db, 'reviews_' + restaurantId),
       orderBy('timestamp', 'desc')
@@ -987,25 +1016,19 @@ renderCards();
         avgWrap.innerHTML = '';
         return;
       }
-      const reviews = snapshot.docs.map(d => d.data());
-
-      // Tính điểm trung bình
+      const reviews = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
       const avg = (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1);
       avgWrap.innerHTML = `<div class="review-avg">⭐ ${avg} / 5 &nbsp;·&nbsp; ${reviews.length} đánh giá từ cộng đồng</div>`;
-
-      // Render danh sách
       list.innerHTML = reviews.map(r => `
-  <div class="review-item">
-    <div class="review-item-top">
-      <span class="review-item-name">👤 ${r.name || 'Ẩn danh'}</span>
-      <span class="review-item-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span>
-      ${window.isAdmin
-        ? `<button class="btn-delete-review" onclick="deleteReview('${r.id}', ${window._currentRestId})">🗑️ Xóa</button>`
-        : ''}
-    </div>
-    <div class="review-item-date">${r.date || ''}</div>
-    <div class="review-item-comment">${r.comment || ''}</div>
-  </div>`).join('');
+        <div class="review-item">
+          <div class="review-item-top">
+            <span class="review-item-name">👤 ${r.name || 'Ẩn danh'}</span>
+            <span class="review-item-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span>
+            ${window.isAdmin ? `<button class="btn-delete-review" onclick="deleteReview('${r.id}', ${restaurantId})">🗑️ Xóa</button>` : ''}
+          </div>
+          <div class="review-item-date">${r.date || ''}</div>
+          <div class="review-item-comment">${r.comment || ''}</div>
+        </div>`).join('');
     });
   };
 
@@ -1016,24 +1039,18 @@ renderCards();
   window.submitReview = async function() {
     const starEl = document.querySelector('input[name="star"]:checked');
     if (!starEl) { alert('⭐ Bạn chưa chọn số sao!'); return; }
-
     const rating  = parseInt(starEl.value);
     const name    = document.getElementById('review-name').value.trim() || 'Ẩn danh';
     const comment = document.getElementById('review-text').value.trim();
     if (!comment) { alert('✍️ Bạn chưa nhập nội dung đánh giá!'); return; }
-
     const btn = document.getElementById('btn-submit-review');
-    btn.disabled = true;
-    btn.textContent = 'Đang gửi...';
-
+    btn.disabled = true; btn.textContent = 'Đang gửi...';
     const now = new Date();
     const date = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
-
     try {
       await addDoc(collection(db, 'reviews_' + window._currentRestId), {
         name, rating, comment, date, timestamp: serverTimestamp()
       });
-      // Reset form
       document.querySelector('input[name="star"]:checked').checked = false;
       document.getElementById('review-name').value = '';
       document.getElementById('review-text').value = '';
@@ -1041,43 +1058,9 @@ renderCards();
       setTimeout(() => { btn.disabled = false; btn.textContent = 'Gửi đánh giá 🚀'; }, 2000);
     } catch(e) {
       alert('❌ Lỗi khi gửi: ' + e.message);
-      btn.disabled = false;
-      btn.textContent = 'Gửi đánh giá 🚀';
+      btn.disabled = false; btn.textContent = 'Gửi đánh giá 🚀';
     }
   };
-  /* ── ADMIN ── */
-const ADMIN_PASSWORD = 'Huy2007@'; // ← ĐỔI MẬT KHẨU Ở ĐÂY
-let isAdmin = false;
-
-function toggleAdmin() {
-  if (isAdmin) {
-    // Đang là admin → đăng xuất
-    isAdmin = false;
-    document.getElementById('btn-admin-login').textContent = '🔐 Đăng nhập Admin';
-    document.getElementById('btn-admin-login').classList.remove('active');
-    renderCards(); // re-render để ẩn nút xóa
-    return;
-  }
-  const pw = prompt('🔐 Nhập mật khẩu Admin:');
-  if (pw === ADMIN_PASSWORD) {
-    isAdmin = true;
-    document.getElementById('btn-admin-login').textContent = '✅ Admin • Đăng xuất';
-    document.getElementById('btn-admin-login').classList.add('active');
-    alert('✅ Đăng nhập thành công!');
-  } else if (pw !== null) {
-    alert('❌ Sai mật khẩu!');
-  }
-}
-import { deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
-
-window.deleteReview = async function(reviewId, restaurantId) {
-  if (!confirm('🗑️ Xóa đánh giá này?')) return;
-  try {
-    await deleteDoc(doc(db, 'reviews_' + restaurantId, reviewId));
-  } catch(e) {
-    alert('❌ Lỗi: ' + e.message);
-  }
-};
 </script>
 </body>
 </html>
