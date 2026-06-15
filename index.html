@@ -480,6 +480,26 @@ main{max-width:1200px;margin:0 auto;padding:32px 24px 80px}
    Mỗi quán có: 1 ảnh bìa (coverImg) + mảng photos (gallery)
    ĐỂ THAY ẢNH THẬT: đổi URL trong coverImg và photos[]
 ================================================================ */
+/* ── KIỂM TRA GIỜ MỞ CỬA ── */
+function isOpenNow(openHours) {
+  const now = new Date();
+  const cur = now.getHours() * 60 + now.getMinutes(); // phút từ 00:00
+
+  return openHours.some(({ open, close }) => {
+    const [oh, om] = open.split(':').map(Number);
+    const [ch, cm] = close.split(':').map(Number);
+    const openMin  = oh * 60 + om;
+    const closeMin = ch * 60 + cm;
+    return cur >= openMin && cur < closeMin;
+  });
+}
+
+function getStatusHtml(openHours) {
+  const open = isOpenNow(openHours);
+  return open
+    ? `<span class="dot dot-open"></span><span class="status-open">Đang mở cửa</span>`
+    : `<span class="dot dot-closed"></span><span class="status-closed">Đã đóng cửa</span>`;
+}
 const RESTAURANTS = [
   {
     id: 1,
@@ -499,7 +519,7 @@ const RESTAURANTS = [
       './foodmap/images/mixue-3.jpg',
       './foodmap/images/mixue-4.jpg',
     ],
-    status: 'open',
+    openHours: [{ open: '08:00', close: '22:30' }],
     hours: '08:00 – 22:30 (Hằng ngày)',
     distance: '2.4 km', phone: 'None',
     mapLat: 15.978792628334535, mapLng: 108.25026628356206,
@@ -523,7 +543,7 @@ const RESTAURANTS = [
       './foodmap/images/oha3.jpg',
       './foodmap/images/oha4.jpg'
     ],
-    status: 'open',
+    openHours: [{ open: '06:00', close: '12:00' }],
     hours: '06:00 – 12:00 (Hằng ngày)',
     distance: '400m', phone: '0396 432 597',
     mapLat: 15.968117362381703, mapLng: 108.25857611383567,
@@ -547,7 +567,7 @@ const RESTAURANTS = [
       './foodmap/images/family3.jpg',
       './foodmap/images/family4.jpg'
     ],
-    status: 'open',
+    openHours: [{ open: '09:00', close: '21:00' }],
     hours: '09:00 – 21:00',
     distance: '1.5 km', phone: '0979 268 152',
     mapLat: 16.0760, mapLng: 108.2580,
@@ -571,7 +591,10 @@ const RESTAURANTS = [
       './foodmap/images/baoghien3.jpg',
       './foodmap/images/baoghien4.jpg'
     ],
-    status: 'open',
+    openHours: [
+      { open: '10:30', close: '13:30' },
+      { open: '17:30', close: '20:00' }
+    ],
     hours: '10:30–13:30 · 17:30–20:00 (Hằng ngày)',
     distance: '1.2 km', phone: '0919 380 578',
     mapLat: 15.977700764092607, mapLng: 108.26210114993214, 
@@ -595,7 +618,7 @@ const RESTAURANTS = [
       './foodmap/images/comphuong3.jpg',
       './foodmap/images/comphuong4.jpg'
     ],
-    status: 'open',
+    openHours: [{ open: '05:30', close: '20:00' }],
     hours: '05:30 – 20:00',
     distance: '220 m', phone: '0377 931 718',
     mapLat: 15.968242432138041, mapLng: 108.26216451026106,
@@ -645,10 +668,9 @@ function renderCards() {
     grid.innerHTML = `<div class="empty-state"><div class="es-icon">🔍</div><h3>Không tìm thấy quán nào</h3><p>Thử tìm kiếm với từ khoá khác nhé!</p></div>`;
     return;
   }
-
+  
   grid.innerHTML = '';
   data.forEach((r, i) => {
-    const isOpen = r.status === 'open';
     const card = document.createElement('div');
     card.className = 'food-card' + (viewed.has(r.id) ? ' viewed' : '');
     card.dataset.id = r.id;
@@ -671,10 +693,7 @@ function renderCards() {
           <span class="card-price">💵 ${r.price}</span>
           <div class="card-right-col">
             <span class="card-rating">⭐ ${r.rating}</span>
-            <span class="card-status ${isOpen?'status-open':'status-closed'}">
-              <span class="dot ${isOpen?'dot-open':'dot-closed'}"></span>
-              ${isOpen?'Đang mở cửa':'Đã đóng cửa'}
-            </span>
+            <div class="card-status">${getStatusHtml(r.openHours)}</div>
           </div>
         </div>
       </div>`;
@@ -725,9 +744,11 @@ function openModal(r) {
   document.getElementById('modal-dist-stat').textContent = r.distance;
   document.getElementById('modal-desc').textContent = r.desc;
 
-  const isOpen = r.status === 'open';
-  document.getElementById('modal-hours').innerHTML =
-    `<span style="color:${isOpen?'#16A34A':'#DC2626'};font-weight:700">${isOpen?'🟢 Đang mở':'🔴 Đóng cửa'}</span> · ${r.hours}`;
+  // ✅ MỚI
+const isOpen = isOpenNow(r.openHours);
+document.getElementById('modal-hours').innerHTML =
+  `<span style="color:${isOpen?'#16A34A':'#DC2626'};font-weight:700">
+  ${isOpen?'🟢 Đang mở':'🔴 Đóng cửa'}</span> · ${r.hours}`;
 
   // Gallery
   renderGallery(r.photos);
@@ -1037,6 +1058,10 @@ renderCards();
       btn.disabled = false; btn.textContent = 'Gửi đánh giá 🚀';
     }
   };
+  /* ── TỰ CẬP NHẬT TRẠNG THÁI MỖI PHÚT ── */
+setInterval(() => {
+  renderCards();
+}, 60 * 1000); // 60 giây
 </script>
 </body>
 </html>
