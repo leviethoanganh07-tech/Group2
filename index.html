@@ -927,7 +927,8 @@ function getBotReply(text) {
   if (matched.length) {
     return `🍽️ Tìm thấy <b>${matched.length} quán</b>:<br><br>` +
       matched.map(q => {
-        const open = q.status === 'open';
+        // ✅ Dùng isOpenNow
+        const open = isOpenNow(q.openHours);
         return `${q.name}<br>📍 ${q.shortAddr} · 💵 ${q.price} · ⭐${q.rating}<br>` +
           `<span style="color:${open?'#16A34A':'#DC2626'};font-weight:700">${open?'🟢 Mở':'🔴 Đóng'}</span>`;
       }).join('<br><br>') + '<br><br>💡 <i>Click card để xem bản đồ & ảnh!</i>';
