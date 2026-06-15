@@ -313,6 +313,62 @@ main{max-width:1200px;margin:0 auto;padding:32px 24px 80px}
   transition: background .2s; flex-shrink: 0;
 }
 .btn-delete-review:hover { background: #FEE2E2; }
+/* ── ADMIN PASSWORD MODAL ── */
+.pw-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  z-index: 1200; display: flex; align-items: center;
+  justify-content: center; opacity: 0; pointer-events: none;
+  transition: opacity .2s; backdrop-filter: blur(4px);
+}
+.pw-overlay.open { opacity: 1; pointer-events: all; }
+.pw-box {
+  background: white; border-radius: 18px; padding: 28px 26px;
+  width: 100%; max-width: 340px; box-shadow: 0 16px 48px rgba(0,0,0,0.18);
+  transform: translateY(16px); transition: transform .25s;
+  border: 1.5px solid var(--border);
+}
+.pw-overlay.open .pw-box { transform: translateY(0); }
+.pw-box h3 {
+  font-family: 'Sora', sans-serif; font-size: 17px;
+  font-weight: 800; margin-bottom: 16px; color: var(--text);
+  text-align: center;
+}
+.pw-input-wrap {
+  position: relative; margin-bottom: 14px;
+}
+.pw-input-wrap input {
+  width: 100%; height: 44px; border: 1.5px solid var(--border);
+  border-radius: 12px; padding: 0 44px 0 16px;
+  font-family: 'Nunito', sans-serif; font-size: 14px;
+  outline: none; color: var(--text); transition: border-color .2s;
+}
+.pw-input-wrap input:focus { border-color: var(--primary); }
+.pw-toggle-eye {
+  position: absolute; right: 14px; top: 50%;
+  transform: translateY(-50%); background: none; border: none;
+  cursor: pointer; font-size: 18px; padding: 0;
+  color: var(--text-muted);
+}
+.pw-error {
+  font-size: 12.5px; color: #DC2626; font-weight: 600;
+  margin-bottom: 12px; display: none; text-align: center;
+}
+.pw-error.show { display: block; }
+.pw-btns { display: flex; gap: 10px; }
+.pw-btn-cancel {
+  flex: 1; height: 42px; background: white; color: var(--text-sub);
+  border: 1.5px solid var(--border); border-radius: 21px;
+  font-family: 'Nunito', sans-serif; font-size: 13px;
+  font-weight: 700; cursor: pointer; transition: all .2s;
+}
+.pw-btn-cancel:hover { border-color: var(--primary); color: var(--primary); }
+.pw-btn-ok {
+  flex: 1; height: 42px; background: var(--primary); color: white;
+  border: none; border-radius: 21px;
+  font-family: 'Nunito', sans-serif; font-size: 13px;
+  font-weight: 700; cursor: pointer; transition: background .2s;
+}
+.pw-btn-ok:hover { background: var(--primary-hover); }
 </style>
 </head>
 <body>
@@ -992,25 +1048,64 @@ renderCards();
   const ADMIN_PASSWORD = 'Huy2007@';
   window.isAdmin = false;
 
-  window.toggleAdmin = function() {
-    if (window.isAdmin) {
-      window.isAdmin = false;
-      document.getElementById('btn-admin-login').textContent = '🔐 Đăng nhập Admin';
-      document.getElementById('btn-admin-login').classList.remove('active');
-      loadReviews(window._currentRestId);
-      return;
-    }
-    const pw = prompt('🔐 Nhập mật khẩu Admin:');
-    if (pw === ADMIN_PASSWORD) {
-      window.isAdmin = true;
-      document.getElementById('btn-admin-login').textContent = '✅ Admin • Đăng xuất';
-      document.getElementById('btn-admin-login').classList.add('active');
-      alert('✅ Đăng nhập thành công!');
-      loadReviews(window._currentRestId);
-    } else if (pw !== null) {
-      alert('❌ Sai mật khẩu!');
-    }
-  };
+  /* ── ADMIN PASSWORD MODAL ── */
+function openPwModal() {
+  document.getElementById('pw-overlay').classList.add('open');
+  document.getElementById('pw-input').value = '';
+  document.getElementById('pw-error').classList.remove('show');
+  setTimeout(() => document.getElementById('pw-input').focus(), 100);
+}
+
+function closePwModal() {
+  document.getElementById('pw-overlay').classList.remove('open');
+}
+
+// Toggle hiện/ẩn mật khẩu
+document.getElementById('pw-toggle-eye').addEventListener('click', () => {
+  const input = document.getElementById('pw-input');
+  const btn = document.getElementById('pw-toggle-eye');
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    input.type = 'password';
+    btn.textContent = '👁️';
+  }
+});
+
+// Nhấn OK
+function confirmAdmin() {
+  const pw = document.getElementById('pw-input').value;
+  if (pw === ADMIN_PASSWORD) {
+    window.isAdmin = true;
+    document.getElementById('btn-admin-login').textContent = '✅ Admin • Đăng xuất';
+    document.getElementById('btn-admin-login').classList.add('active');
+    closePwModal();
+    loadReviews(window._currentRestId);
+  } else {
+    document.getElementById('pw-error').classList.add('show');
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-input').focus();
+  }
+}
+
+document.getElementById('pw-btn-ok').addEventListener('click', confirmAdmin);
+document.getElementById('pw-btn-cancel').addEventListener('click', closePwModal);
+document.getElementById('pw-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') confirmAdmin();
+  if (e.key === 'Escape') closePwModal();
+});
+
+window.toggleAdmin = function() {
+  if (window.isAdmin) {
+    window.isAdmin = false;
+    document.getElementById('btn-admin-login').textContent = '🔐 Đăng nhập Admin';
+    document.getElementById('btn-admin-login').classList.remove('active');
+    loadReviews(window._currentRestId);
+    return;
+  }
+  openPwModal();
+};
 
   window.deleteReview = async function(reviewId, restaurantId) {
     if (!confirm('🗑️ Xóa đánh giá này?')) return;
@@ -1112,5 +1207,20 @@ function loadAllRatings() {
 // Gọi ngay khi load trang
 loadAllRatings();
 </script>
+<!-- ADMIN PASSWORD MODAL -->
+<div class="pw-overlay" id="pw-overlay">
+  <div class="pw-box">
+    <h3>🔐 Đăng nhập Admin</h3>
+    <div class="pw-input-wrap">
+      <input type="password" id="pw-input" placeholder="Nhập mật khẩu...">
+      <button class="pw-toggle-eye" id="pw-toggle-eye" type="button">👁️</button>
+    </div>
+    <div class="pw-error" id="pw-error">❌ Sai mật khẩu, thử lại!</div>
+    <div class="pw-btns">
+      <button class="pw-btn-cancel" id="pw-btn-cancel">Huỷ</button>
+      <button class="pw-btn-ok" id="pw-btn-ok">Đăng nhập</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
