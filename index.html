@@ -795,7 +795,6 @@ function renderCards() {
         <div class="card-footer">
           <span class="card-price">💵 ${r.price}</span>
           <div class="card-right-col">
-            // ✅ MỚI
             <span class="card-rating">⭐ ${r.rating} <span style="color:#A0A0B0;font-weight:500;font-size:11px">GG</span></span>
             ${(window._userRatings && window._userRatings[r.id])
               ? `<span class="card-community-rating">💜 ${window._userRatings[r.id].avgStr} <span style="font-weight:500;font-size:10px">(${window._userRatings[r.id].count} CĐ)</span></span>`
@@ -1147,16 +1146,15 @@ document.getElementById('pw-input').addEventListener('keydown', e => {
   if (e.key === 'Escape') closePwModal();
 });
 
+// ✅ THAY BẰNG
 window.toggleAdmin = function() {
-  const adminForm = document.getElementById('admin-comment-form');
-if (adminForm) adminForm.style.display = window.isAdmin ? 'block' : 'none';
   if (window.isAdmin) {
     window.isAdmin = false;
     document.getElementById('btn-admin-login').textContent = '🔐 Đăng nhập Admin';
     document.getElementById('btn-admin-login').classList.remove('active');
-    loadReviews(window._currentRestId);
     const adminForm = document.getElementById('admin-comment-form');
-if (adminForm) adminForm.style.display = window.isAdmin ? 'block' : 'none';
+    if (adminForm) adminForm.style.display = 'none';
+    loadReviews(window._currentRestId);
     return;
   }
   openPwModal();
@@ -1270,14 +1268,15 @@ function loadAllRatings() {
         window._userRatings[r.id] = null;
         return;
       }
-      const reviews = snapshot.docs.map(d => d.data());
-      const avg = (reviews.reduce((s, rv) => s + rv.rating, 0) / reviews.length);
-      window._userRatings[r.id] = {
-        avg: avg,
-        avgStr: avg.toFixed(1),
-        count: reviews.length
-      };
-      renderCards();
+      // ✅ MỚI – chỉ tính review có sao thật
+const reviews = snapshot.docs.map(d => d.data());
+const starOnly = reviews.filter(rv => rv.rating && rv.rating > 0);
+if (starOnly.length === 0) { window._userRatings[r.id] = null; return; }
+const avg = starOnly.reduce((s, rv) => s + rv.rating, 0) / starOnly.length;
+window._userRatings[r.id] = {
+  avg, avgStr: avg.toFixed(1), count: starOnly.length
+};
+renderCards();
     });
   });
 }
