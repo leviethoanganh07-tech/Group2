@@ -369,6 +369,47 @@ main{max-width:1200px;margin:0 auto;padding:32px 24px 80px}
   font-weight: 700; cursor: pointer; transition: background .2s;
 }
 .pw-btn-ok:hover { background: var(--primary-hover); }
+/* ── COMMUNITY RATING ON CARD ── */
+.card-community-rating {
+  font-size: 11px; font-weight: 700; color: #7C3AED;
+  display: flex; align-items: center; gap: 3px; margin-top: 3px;
+}
+/* ── ADMIN COMMENT ── */
+.admin-comment-form {
+  background: #EFF6FF; border: 1.5px solid #BFDBFE;
+  border-radius: 14px; padding: 14px; margin-bottom: 14px;
+}
+.admin-comment-title {
+  font-size: 13px; font-weight: 800; color: #1D4ED8; margin-bottom: 10px;
+}
+.admin-comment-input {
+  width: 100%; border: 1.5px solid #BFDBFE; border-radius: 10px;
+  padding: 10px 14px; font-family: 'Nunito', sans-serif; font-size: 13.5px;
+  outline: none; background: white; color: var(--text);
+  transition: border-color .2s; margin-bottom: 10px;
+  display: block; resize: vertical; min-height: 64px;
+}
+.admin-comment-input:focus { border-color: #3B82F6; }
+.btn-admin-comment {
+  height: 38px; padding: 0 18px; background: #3B82F6; color: white;
+  border: none; border-radius: 19px; font-family: 'Nunito', sans-serif;
+  font-size: 13px; font-weight: 800; cursor: pointer; transition: background .2s;
+}
+.btn-admin-comment:hover { background: #2563EB; }
+/* ── ADMIN REVIEW ITEM ── */
+.review-item.admin-review {
+  background: #EFF6FF; border-color: #BFDBFE;
+  order: -1;
+}
+.review-item-name.admin-name {
+  color: #1D4ED8; display: flex; align-items: center; gap: 5px;
+}
+.admin-badge {
+  background: #3B82F6; color: white; font-size: 10px;
+  font-weight: 800; padding: 2px 7px; border-radius: 10px;
+  letter-spacing: .3px;
+}
+.review-list { display: flex; flex-direction: column; gap: 10px; max-height: 320px; overflow-y: auto; }
 </style>
 </head>
 <body>
@@ -469,7 +510,13 @@ main{max-width:1200px;margin:0 auto;padding:32px 24px 80px}
   </button>
 </div>
   <div id="review-avg-wrap"></div>
-
+  <!-- ADMIN COMMENT FORM (chỉ hiện khi đăng nhập admin) -->
+<div class="admin-comment-form" id="admin-comment-form" style="display:none">
+  <div class="admin-comment-title">👑 Ghim bình luận Admin</div>
+  <textarea class="admin-comment-input" id="admin-comment-text"
+    placeholder="Nhập bình luận để ghim lên đầu..."></textarea>
+  <button class="btn-admin-comment" onclick="submitAdminComment()">📌 Ghim bình luận</button>
+</div>
   <!-- Form viết review -->
   <div class="review-form">
     <div class="review-form-title">✍️ Viết đánh giá của bạn</div>
@@ -748,7 +795,11 @@ function renderCards() {
         <div class="card-footer">
           <span class="card-price">💵 ${r.price}</span>
           <div class="card-right-col">
-            <span class="card-rating">⭐ ${r.rating}</span>
+            // ✅ MỚI
+            <span class="card-rating">⭐ ${r.rating} <span style="color:#A0A0B0;font-weight:500;font-size:11px">GG</span></span>
+            ${(window._userRatings && window._userRatings[r.id])
+              ? `<span class="card-community-rating">💜 ${window._userRatings[r.id].avgStr} <span style="font-weight:500;font-size:10px">(${window._userRatings[r.id].count} CĐ)</span></span>`
+              : ''}
             <div class="card-status">${getStatusHtml(r.openHours)}</div>
           </div>
         </div>
@@ -1097,11 +1148,15 @@ document.getElementById('pw-input').addEventListener('keydown', e => {
 });
 
 window.toggleAdmin = function() {
+  const adminForm = document.getElementById('admin-comment-form');
+if (adminForm) adminForm.style.display = window.isAdmin ? 'block' : 'none';
   if (window.isAdmin) {
     window.isAdmin = false;
     document.getElementById('btn-admin-login').textContent = '🔐 Đăng nhập Admin';
     document.getElementById('btn-admin-login').classList.remove('active');
     loadReviews(window._currentRestId);
+    const adminForm = document.getElementById('admin-comment-form');
+if (adminForm) adminForm.style.display = window.isAdmin ? 'block' : 'none';
     return;
   }
   openPwModal();
@@ -1117,34 +1172,56 @@ window.toggleAdmin = function() {
   };
 
   window.loadReviews = function(restaurantId) {
-    if (unsubscribe) unsubscribe();
-    const q = query(
-      collection(db, 'reviews_' + restaurantId),
-      orderBy('timestamp', 'desc')
-    );
-    unsubscribe = onSnapshot(q, (snapshot) => {
-      const list = document.getElementById('review-list');
-      const avgWrap = document.getElementById('review-avg-wrap');
-      if (snapshot.empty) {
-        list.innerHTML = '<div class="review-empty">Chưa có đánh giá nào. Hãy là người đầu tiên! 🌟</div>';
-        avgWrap.innerHTML = '';
-        return;
-      }
-      const reviews = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-      const avg = (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1);
-      avgWrap.innerHTML = `<div class="review-avg">⭐ ${avg} / 5 &nbsp;·&nbsp; ${reviews.length} đánh giá từ cộng đồng</div>`;
-      list.innerHTML = reviews.map(r => `
-        <div class="review-item">
-          <div class="review-item-top">
-            <span class="review-item-name">👤 ${r.name || 'Ẩn danh'}</span>
-            <span class="review-item-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span>
-            ${window.isAdmin ? `<button class="btn-delete-review" onclick="deleteReview('${r.id}', ${restaurantId})">🗑️ Xóa</button>` : ''}
-          </div>
-          <div class="review-item-date">${r.date || ''}</div>
-          <div class="review-item-comment">${r.comment || ''}</div>
-        </div>`).join('');
-    });
-  };
+  if (unsubscribe) unsubscribe();
+  const q = query(
+    collection(db, 'reviews_' + restaurantId),
+    orderBy('timestamp', 'desc')
+  );
+  unsubscribe = onSnapshot(q, (snapshot) => {
+    const list = document.getElementById('review-list');
+    const avgWrap = document.getElementById('review-avg-wrap');
+
+    // Hiện/ẩn form admin comment
+    const adminForm = document.getElementById('admin-comment-form');
+    if (adminForm) adminForm.style.display = window.isAdmin ? 'block' : 'none';
+
+    if (snapshot.empty) {
+      list.innerHTML = '<div class="review-empty">Chưa có đánh giá nào. Hãy là người đầu tiên! 🌟</div>';
+      avgWrap.innerHTML = '';
+      return;
+    }
+
+    const reviews = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    // Tính avg chỉ từ review có sao (không tính admin comment)
+    const starReviews = reviews.filter(r => r.rating && r.rating > 0);
+    if (starReviews.length > 0) {
+      const avg = (starReviews.reduce((s, r) => s + r.rating, 0) / starReviews.length).toFixed(1);
+      avgWrap.innerHTML = `<div class="review-avg">⭐ ${avg} / 5 &nbsp;·&nbsp; ${starReviews.length} đánh giá từ cộng đồng</div>`;
+    } else {
+      avgWrap.innerHTML = '';
+    }
+
+    // Admin reviews lên đầu
+    const adminReviews = reviews.filter(r => r.isAdmin);
+    const userReviews  = reviews.filter(r => !r.isAdmin);
+    const sorted = [...adminReviews, ...userReviews];
+
+    list.innerHTML = sorted.map(r => `
+      <div class="review-item ${r.isAdmin ? 'admin-review' : ''}">
+        <div class="review-item-top">
+          <span class="review-item-name ${r.isAdmin ? 'admin-name' : ''}">
+            ${r.isAdmin ? '👑' : '👤'} ${r.isAdmin ? 'Admin' : (r.name || 'Ẩn danh')}
+            ${r.isAdmin ? '<span class="admin-badge">ADMIN</span>' : ''}
+          </span>
+          ${r.rating ? `<span class="review-item-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span>` : ''}
+          ${window.isAdmin ? `<button class="btn-delete-review" onclick="deleteReview('${r.id}', ${restaurantId})">🗑️ Xóa</button>` : ''}
+        </div>
+        <div class="review-item-date">${r.date || ''}</div>
+        <div class="review-item-comment">${r.comment || ''}</div>
+      </div>`).join('');
+  });
+};
 
   window.stopReviews = function() {
     if (unsubscribe) { unsubscribe(); unsubscribe = null; }
@@ -1200,12 +1277,28 @@ function loadAllRatings() {
         avgStr: avg.toFixed(1),
         count: reviews.length
       };
+      renderCards();
     });
   });
 }
 
 // Gọi ngay khi load trang
 loadAllRatings();
+window.submitAdminComment = async function() {
+  const comment = document.getElementById('admin-comment-text').value.trim();
+  if (!comment) { alert('✍️ Chưa nhập nội dung!'); return; }
+  const now = new Date();
+  const date = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+  try {
+    await addDoc(collection(db, 'reviews_' + window._currentRestId), {
+      name: 'Admin', comment, rating: 0, isAdmin: true,
+      date, timestamp: serverTimestamp()
+    });
+    document.getElementById('admin-comment-text').value = '';
+  } catch(e) {
+    alert('❌ Lỗi: ' + e.message);
+  }
+};
 </script>
 <!-- ADMIN PASSWORD MODAL -->
 <div class="pw-overlay" id="pw-overlay">
