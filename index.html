@@ -915,10 +915,31 @@ function getBotReply(text) {
     const top = [...RESTAURANTS].sort((a,b) => a.priceNum - b.priceNum).slice(0,2);
     return '💰 <b>Top quán giá rẻ:</b><br><br>' + top.map(q => `${q.name} – ${q.price}`).join('<br>');
   }
-  if (['ngon','ngon nhất','rating cao','nhiều sao'].some(k => text.includes(k))) {
+  // ✅ MỚI – dùng rating từ người dùng
+if (['ngon','ngon nhất','rating cao','nhiều sao'].some(k => text.includes(k))) {
+  const ratings = window._userRatings || {};
+  
+  // Lọc các quán đã có đánh giá từ người dùng
+  const withReviews = RESTAURANTS
+    .filter(r => ratings[r.id] && ratings[r.id].count > 0)
+    .sort((a, b) => ratings[b.id].avg - ratings[a.id].avg);
+
+  if (withReviews.length === 0) {
+    // Chưa có ai đánh giá → fallback Google Maps
     const top = [...RESTAURANTS].sort((a,b) => b.rating - a.rating)[0];
-    return `⭐ Quán được đánh giá cao nhất: <b>${top.name}</b><br>⭐ ${top.rating}/5 · ${top.price}`;
+    return `⭐ Chưa có đánh giá từ cộng đồng.<br>Theo Google Maps thì <b>${top.name}</b> được đánh giá cao nhất: ⭐ ${top.rating}/5`;
   }
+
+  const top = withReviews[0];
+  const info = ratings[top.id];
+  const isOpen = isOpenNow(top.openHours);
+  return `⭐ Theo đánh giá cộng đồng, quán ngon nhất là:<br><br>` +
+    `<b>${top.name}</b><br>` +
+    `📍 ${top.shortAddr}<br>` +
+    `⭐ <b>${info.avgStr}/5</b> (${info.count} đánh giá) · 💵 ${top.price}<br>` +
+    `<span style="color:${isOpen?'#16A34A':'#DC2626'};font-weight:700">${isOpen?'🟢 Đang mở':'🔴 Đóng cửa'}</span><br><br>` +
+    `💡 <i>Click card để xem chi tiết!</i>`;
+}
   if (['tất cả','danh sách','quán nào','liệt kê'].some(k => text.includes(k))) {
     return '🗺️ <b>Tất cả quán gần FPT:</b><br><br>' +
       RESTAURANTS.map(q => `${q.name} – ${q.price} (⭐${q.rating})`).join('<br>');
@@ -1063,6 +1084,33 @@ renderCards();
 setInterval(() => {
   renderCards();
 }, 60 * 1000); // 60 giây
+/* ── LOAD RATING TẤT CẢ QUÁN KHI KHỞI ĐỘNG ── */
+window._userRatings = {}; // cache: { restaurantId: { avg, count } }
+
+function loadAllRatings() {
+  RESTAURANTS.forEach(r => {
+    const q = query(
+      collection(db, 'reviews_' + r.id),
+      orderBy('timestamp', 'desc')
+    );
+    onSnapshot(q, (snapshot) => {
+      if (snapshot.empty) {
+        window._userRatings[r.id] = null;
+        return;
+      }
+      const reviews = snapshot.docs.map(d => d.data());
+      const avg = (reviews.reduce((s, rv) => s + rv.rating, 0) / reviews.length);
+      window._userRatings[r.id] = {
+        avg: avg,
+        avgStr: avg.toFixed(1),
+        count: reviews.length
+      };
+    });
+  });
+}
+
+// Gọi ngay khi load trang
+loadAllRatings();
 </script>
 </body>
 </html>
