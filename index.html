@@ -1372,6 +1372,7 @@ window.toggleAdmin = function() {
     const adminForm = document.getElementById('admin-comment-form');
     if (adminForm) adminForm.style.display = 'none';
     document.getElementById('admin-suggest-btn').classList.remove('visible');
+    loadReviews(window._currentRestId);
     return;
   }
   openPwModal();
