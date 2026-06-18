@@ -410,6 +410,170 @@ main{max-width:1200px;margin:0 auto;padding:32px 24px 80px}
   letter-spacing: .3px;
 }
 .review-list { display: flex; flex-direction: column; gap: 10px; max-height: 320px; overflow-y: auto; }
+/* ── SUGGEST BUTTON ── */
+.suggest-fab {
+  position: fixed; bottom: 96px; left: 26px;
+  height: 46px; padding: 0 20px;
+  background: linear-gradient(135deg, #7C3AED, #A855F7);
+  border: none; border-radius: 23px; color: white;
+  font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 800;
+  cursor: pointer; box-shadow: 0 6px 20px rgba(124,58,237,0.35);
+  display: flex; align-items: center; gap: 8px;
+  transition: transform .2s, box-shadow .2s; z-index: 800;
+}
+.suggest-fab:hover { transform: scale(1.05); box-shadow: 0 8px 28px rgba(124,58,237,0.45); }
+
+/* ── SUGGEST MODAL ── */
+.suggest-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+  z-index: 1000; display: flex; align-items: center; justify-content: center;
+  padding: 16px; opacity: 0; pointer-events: none;
+  transition: opacity .25s; backdrop-filter: blur(4px);
+}
+.suggest-overlay.open { opacity: 1; pointer-events: all; }
+.suggest-modal {
+  background: white; border-radius: 22px; width: 100%; max-width: 520px;
+  max-height: 92vh; overflow-y: auto;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.2);
+  transform: translateY(24px) scale(0.97);
+  transition: transform .28s cubic-bezier(.22,.68,0,1.1);
+  border: 1.5px solid #E9D5FF;
+}
+.suggest-overlay.open .suggest-modal { transform: translateY(0) scale(1); }
+.suggest-modal-head {
+  background: linear-gradient(135deg, #7C3AED, #A855F7);
+  padding: 20px 24px; border-radius: 22px 22px 0 0;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.suggest-modal-head h3 {
+  font-family: 'Sora', sans-serif; font-size: 17px;
+  font-weight: 800; color: white;
+}
+.suggest-modal-close {
+  background: rgba(255,255,255,0.2); border: none; color: white;
+  width: 32px; height: 32px; border-radius: 50%; font-size: 16px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background .2s;
+}
+.suggest-modal-close:hover { background: rgba(255,255,255,0.32); }
+.suggest-modal-body { padding: 22px 24px 26px; }
+.suggest-field { margin-bottom: 16px; }
+.suggest-label {
+  display: block; font-size: 13px; font-weight: 700;
+  color: var(--text-sub); margin-bottom: 6px;
+}
+.suggest-input, .suggest-textarea {
+  width: 100%; border: 1.5px solid var(--border); border-radius: 11px;
+  padding: 10px 14px; font-family: 'Nunito', sans-serif; font-size: 14px;
+  outline: none; color: var(--text); transition: border-color .2s; background: var(--bg);
+}
+.suggest-input:focus, .suggest-textarea:focus { border-color: #7C3AED; }
+.suggest-textarea { resize: vertical; min-height: 80px; }
+.suggest-img-upload {
+  border: 2px dashed #D8B4FE; border-radius: 11px;
+  padding: 20px; text-align: center; cursor: pointer;
+  transition: all .2s; background: #FAFAF8;
+}
+.suggest-img-upload:hover { border-color: #7C3AED; background: #FAF5FF; }
+.suggest-img-upload input { display: none; }
+.suggest-img-preview {
+  width: 100%; border-radius: 10px; margin-top: 10px;
+  max-height: 180px; object-fit: cover; display: none;
+}
+.suggest-upload-progress {
+  font-size: 12px; color: #7C3AED; font-weight: 600;
+  margin-top: 8px; display: none;
+}
+.btn-suggest-submit {
+  width: 100%; height: 46px; background: linear-gradient(135deg, #7C3AED, #A855F7);
+  color: white; border: none; border-radius: 23px;
+  font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 800;
+  cursor: pointer; transition: opacity .2s; margin-top: 4px;
+}
+.btn-suggest-submit:disabled { opacity: .6; cursor: not-allowed; }
+.suggest-success {
+  text-align: center; padding: 32px 20px; display: none;
+}
+.suggest-success .ss-icon { font-size: 52px; margin-bottom: 12px; }
+.suggest-success h4 {
+  font-family: 'Sora', sans-serif; font-size: 18px;
+  font-weight: 800; color: var(--text); margin-bottom: 8px;
+}
+.suggest-success p { font-size: 14px; color: var(--text-sub); }
+
+/* ── ADMIN SUGGESTIONS PANEL ── */
+.admin-suggest-btn {
+  position: fixed; bottom: 26px; left: 26px;
+  height: 46px; padding: 0 18px;
+  background: #1D4ED8; border: none; border-radius: 23px; color: white;
+  font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 800;
+  cursor: pointer; display: none; align-items: center; gap: 7px;
+  box-shadow: 0 4px 16px rgba(29,78,216,0.35); z-index: 800;
+  transition: transform .2s;
+}
+.admin-suggest-btn.visible { display: flex; }
+.admin-suggest-btn:hover { transform: scale(1.04); }
+.suggest-notif {
+  background: #EF4444; color: white; font-size: 11px; font-weight: 800;
+  width: 20px; height: 20px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.admin-panel-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+  z-index: 1000; display: flex; align-items: center; justify-content: center;
+  padding: 16px; opacity: 0; pointer-events: none; transition: opacity .25s;
+  backdrop-filter: blur(4px);
+}
+.admin-panel-overlay.open { opacity: 1; pointer-events: all; }
+.admin-panel {
+  background: white; border-radius: 22px; width: 100%; max-width: 680px;
+  max-height: 90vh; overflow-y: auto;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.2);
+  transform: translateY(24px); transition: transform .28s cubic-bezier(.22,.68,0,1.1);
+}
+.admin-panel-overlay.open .admin-panel { transform: translateY(0); }
+.admin-panel-head {
+  background: linear-gradient(135deg, #1D4ED8, #3B82F6);
+  padding: 18px 24px; border-radius: 22px 22px 0 0;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.admin-panel-head h3 {
+  font-family: 'Sora', sans-serif; font-size: 17px; font-weight: 800; color: white;
+}
+.admin-panel-close {
+  background: rgba(255,255,255,0.2); border: none; color: white;
+  width: 32px; height: 32px; border-radius: 50%; font-size: 16px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.admin-panel-body { padding: 20px; }
+.suggest-card {
+  border: 1.5px solid var(--border); border-radius: 14px;
+  padding: 16px; margin-bottom: 14px; background: var(--bg);
+}
+.suggest-card-top {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; margin-bottom: 10px; gap: 10px;
+}
+.suggest-card-name {
+  font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 800; color: var(--text);
+}
+.suggest-card-meta { font-size: 12.5px; color: var(--text-sub); margin-top: 3px; }
+.suggest-card-img {
+  width: 100%; border-radius: 10px; max-height: 200px;
+  object-fit: cover; margin-bottom: 10px; display: none;
+}
+.suggest-card-reason {
+  font-size: 13.5px; color: var(--text-sub); line-height: 1.6;
+  border-left: 3px solid #A855F7; padding-left: 10px; margin-bottom: 10px;
+}
+.suggest-card-date { font-size: 11px; color: var(--text-muted); }
+.btn-delete-suggest {
+  background: #FEE2E2; color: #EF4444; border: none; border-radius: 10px;
+  padding: 6px 12px; font-size: 12px; font-weight: 700; cursor: pointer;
+  transition: background .2s; white-space: nowrap; flex-shrink: 0;
+}
+.btn-delete-suggest:hover { background: #FECACA; }
+.admin-panel-empty { text-align: center; padding: 40px; color: var(--text-muted); font-size: 14px; }
 </style>
 </head>
 <body>
@@ -1089,6 +1253,35 @@ if (['ngon','ngon nhất','rating cao','nhiều sao'].some(k => text.includes(k)
 
 /* ── INIT ── */
 renderCards();
+/* ── SUGGEST MODAL ── */
+function openSuggest() {
+  document.getElementById('suggest-overlay').classList.add('open');
+  document.getElementById('suggest-form-body').style.display = 'block';
+  document.getElementById('suggest-success').style.display = 'none';
+}
+function closeSuggest() {
+  document.getElementById('suggest-overlay').classList.remove('open');
+}
+function previewSuggestImg(input) {
+  if (!input.files || !input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const preview = document.getElementById('sg-img-preview');
+    preview.src = e.target.result;
+    preview.style.display = 'block';
+    document.getElementById('sg-upload-hint').textContent = '✅ Đã chọn ảnh';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+/* ── ADMIN PANEL ── */
+function openAdminPanel() {
+  document.getElementById('admin-panel-overlay').classList.add('open');
+  loadSuggestions();
+}
+function closeAdminPanel() {
+  document.getElementById('admin-panel-overlay').classList.remove('open');
+}
 </script>
 <!-- Firebase SDK -->
 <script type="module">
@@ -1156,6 +1349,7 @@ function confirmAdmin() {
     document.getElementById('btn-admin-login').classList.add('active');
     closePwModal();
     loadReviews(window._currentRestId);
+    document.getElementById('admin-suggest-btn').classList.add('visible');
   } else {
     document.getElementById('pw-error').classList.add('show');
     document.getElementById('pw-input').value = '';
@@ -1177,7 +1371,7 @@ window.toggleAdmin = function() {
     document.getElementById('btn-admin-login').classList.remove('active');
     const adminForm = document.getElementById('admin-comment-form');
     if (adminForm) adminForm.style.display = 'none';
-    loadReviews(window._currentRestId);
+    document.getElementById('admin-suggest-btn').classList.remove('visible');
     return;
   }
   openPwModal();
@@ -1321,6 +1515,118 @@ window.submitAdminComment = async function() {
     alert('❌ Lỗi: ' + e.message);
   }
 };
+/* ── CLOUDINARY CONFIG ── */
+const CLOUDINARY_CLOUD = 'dxhisqoig';
+const CLOUDINARY_PRESET = 'foodmap_unsigned';
+
+async function uploadToCloudinary(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_PRESET);
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, {
+    method: 'POST', body: formData
+  });
+  const data = await res.json();
+  return data.secure_url;
+}
+
+/* ── SUBMIT SUGGEST ── */
+window.submitSuggest = async function() {
+  const name   = document.getElementById('sg-name').value.trim();
+  const addr   = document.getElementById('sg-addr').value.trim();
+  const price  = document.getElementById('sg-price').value.trim();
+  const reason = document.getElementById('sg-reason').value.trim();
+  const imgFile = document.getElementById('sg-img-input').files[0];
+
+  if (!name)   { alert('⚠️ Vui lòng nhập tên quán!'); return; }
+  if (!addr)   { alert('⚠️ Vui lòng nhập địa chỉ!'); return; }
+  if (!reason) { alert('⚠️ Vui lòng nhập lý do đề xuất!'); return; }
+
+  const btn = document.getElementById('btn-suggest-submit');
+  btn.disabled = true; btn.textContent = '⏳ Đang gửi...';
+
+  let imgUrl = '';
+  if (imgFile) {
+    document.getElementById('sg-upload-progress').style.display = 'block';
+    btn.textContent = '⏳ Đang tải ảnh...';
+    try { imgUrl = await uploadToCloudinary(imgFile); }
+    catch(e) { console.warn('Upload ảnh lỗi:', e); }
+    document.getElementById('sg-upload-progress').style.display = 'none';
+  }
+
+  const now = new Date();
+  const date = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+  try {
+    await addDoc(collection(db, 'suggestions'), {
+      name, addr, price, reason, imgUrl, date, timestamp: serverTimestamp(), seen: false
+    });
+    // Show success
+    document.getElementById('suggest-form-body').style.display = 'none';
+    document.getElementById('suggest-success').style.display = 'block';
+    // Reset form
+    ['sg-name','sg-addr','sg-price','sg-reason'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('sg-img-preview').style.display = 'none';
+    document.getElementById('sg-upload-hint').textContent = '🖼️ Nhấn để chọn ảnh từ máy';
+    document.getElementById('sg-img-input').value = '';
+    setTimeout(() => closeSuggest(), 3000);
+  } catch(e) {
+    alert('❌ Lỗi khi gửi: ' + e.message);
+  }
+  btn.disabled = false; btn.textContent = '🚀 Gửi đề xuất';
+};
+
+/* ── LOAD SUGGESTIONS (admin) ── */
+window.loadSuggestions = function() {
+  const q = query(collection(db, 'suggestions'), orderBy('timestamp', 'desc'));
+  onSnapshot(q, (snapshot) => {
+    // Update notif badge
+    const count = snapshot.size;
+    const notif = document.getElementById('suggest-notif');
+    if (notif) notif.textContent = count;
+
+    const body = document.getElementById('admin-panel-body');
+    if (!body) return;
+    if (snapshot.empty) {
+      body.innerHTML = '<div class="admin-panel-empty">📭 Chưa có đề xuất nào</div>';
+      return;
+    }
+    body.innerHTML = snapshot.docs.map(d => {
+      const s = d.data();
+      return `
+        <div class="suggest-card">
+          <div class="suggest-card-top">
+            <div>
+              <div class="suggest-card-name">🏪 ${s.name}</div>
+              <div class="suggest-card-meta">
+                📍 ${s.addr}
+                ${s.price ? ` &nbsp;·&nbsp; 💵 ${s.price}` : ''}
+              </div>
+            </div>
+            <button class="btn-delete-suggest" onclick="deleteSuggest('${d.id}')">🗑️ Xóa</button>
+          </div>
+          ${s.imgUrl ? `<img class="suggest-card-img" src="${s.imgUrl}" style="display:block">` : ''}
+          <div class="suggest-card-reason">"${s.reason}"</div>
+          <div class="suggest-card-date">📅 ${s.date || ''}</div>
+        </div>`;
+    }).join('');
+  });
+};
+
+window.deleteSuggest = async function(id) {
+  if (!confirm('🗑️ Xóa đề xuất này?')) return;
+  try {
+    await deleteDoc(doc(db, 'suggestions', id));
+  } catch(e) { alert('❌ Lỗi: ' + e.message); }
+};
+
+/* ── HIỆN/ẨN NÚT ADMIN PANEL THEO TRẠNG THÁI ĐĂNG NHẬP ── */
+// Gọi loadSuggestions để update badge khi trang load
+const _q = query(collection(db, 'suggestions'), orderBy('timestamp', 'desc'));
+onSnapshot(_q, (snapshot) => {
+  const notif = document.getElementById('suggest-notif');
+  if (notif) notif.textContent = snapshot.size;
+});
 </script>
 <!-- ADMIN PASSWORD MODAL -->
 <div class="pw-overlay" id="pw-overlay">
@@ -1334,6 +1640,73 @@ window.submitAdminComment = async function() {
     <div class="pw-btns">
       <button class="pw-btn-cancel" id="pw-btn-cancel">Huỷ</button>
       <button class="pw-btn-ok" id="pw-btn-ok">Đăng nhập</button>
+    </div>
+  </div>
+</div>
+<!-- SUGGEST FAB -->
+<button class="suggest-fab" onclick="openSuggest()">💡 Đề xuất quán</button>
+
+<!-- ADMIN SUGGESTIONS BUTTON -->
+<button class="admin-suggest-btn" id="admin-suggest-btn" onclick="openAdminPanel()">
+  📋 Đề xuất nhận được
+  <span class="suggest-notif" id="suggest-notif">0</span>
+</button>
+
+<!-- SUGGEST MODAL -->
+<div class="suggest-overlay" id="suggest-overlay">
+  <div class="suggest-modal">
+    <div class="suggest-modal-head">
+      <h3>💡 Đề xuất quán ăn mới</h3>
+      <button class="suggest-modal-close" onclick="closeSuggest()">✕</button>
+    </div>
+    <div class="suggest-modal-body" id="suggest-form-body">
+      <div class="suggest-field">
+        <label class="suggest-label">🏪 Tên quán <span style="color:#EF4444">*</span></label>
+        <input class="suggest-input" id="sg-name" type="text" placeholder="VD: Cơm tấm Bà Bảy">
+      </div>
+      <div class="suggest-field">
+        <label class="suggest-label">📍 Địa chỉ <span style="color:#EF4444">*</span></label>
+        <input class="suggest-input" id="sg-addr" type="text" placeholder="VD: 45 Trường Sa, Ngũ Hành Sơn">
+      </div>
+      <div class="suggest-field">
+        <label class="suggest-label">💵 Giá tiền (không bắt buộc)</label>
+        <input class="suggest-input" id="sg-price" type="text" placeholder="VD: 30.000đ – 50.000đ">
+      </div>
+      <div class="suggest-field">
+        <label class="suggest-label">📸 Ảnh quán (không bắt buộc)</label>
+        <div class="suggest-img-upload" onclick="document.getElementById('sg-img-input').click()">
+          <input type="file" id="sg-img-input" accept="image/*" onchange="previewSuggestImg(this)">
+          <div id="sg-upload-hint">🖼️ Nhấn để chọn ảnh từ máy</div>
+          <img id="sg-img-preview" class="suggest-img-preview" alt="preview">
+          <div class="suggest-upload-progress" id="sg-upload-progress">⏳ Đang tải ảnh lên...</div>
+        </div>
+      </div>
+      <div class="suggest-field">
+        <label class="suggest-label">💬 Vì sao bạn muốn đề xuất quán này? <span style="color:#EF4444">*</span></label>
+        <textarea class="suggest-textarea" id="sg-reason" placeholder="Chia sẻ lý do bạn thích quán này..."></textarea>
+      </div>
+      <button class="btn-suggest-submit" id="btn-suggest-submit" onclick="submitSuggest()">
+        🚀 Gửi đề xuất
+      </button>
+    </div>
+    <!-- Success state -->
+    <div class="suggest-success" id="suggest-success">
+      <div class="ss-icon">🎉</div>
+      <h4>Gửi thành công!</h4>
+      <p>Cảm ơn bạn đã đề xuất!<br>Tụi mình sẽ xem xét và thêm vào sớm nhé 😊</p>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="admin-panel-overlay" id="admin-panel-overlay">
+  <div class="admin-panel">
+    <div class="admin-panel-head">
+      <h3>📋 Đề xuất nhận được</h3>
+      <button class="admin-panel-close" onclick="closeAdminPanel()">✕</button>
+    </div>
+    <div class="admin-panel-body" id="admin-panel-body">
+      <div class="admin-panel-empty">⏳ Đang tải...</div>
     </div>
   </div>
 </div>
