@@ -762,6 +762,11 @@ main{max-width:1200px;margin:0 auto;padding:32px 24px 80px}
 </div>
 
 <script>
+function clearChatFilter() {
+  searchQuery = '';
+  document.getElementById('search-input').value = '';
+  renderCards();
+}
 /* ================================================================
    MOCK DATA – ảnh thực tế từ Unsplash (free, no auth needed)
    Mỗi quán có: 1 ảnh bìa (coverImg) + mảng photos (gallery)
@@ -1260,6 +1265,10 @@ if (['ngon','ngon nhất','rating cao','nhiều sao'].some(k => text.includes(k)
   }
   const matched = RESTAURANTS.filter(r => r.keywords.some(k => text.includes(k)));
   if (matched.length) {
+    const matchedKw = matched[0].keywords.find(k => text.includes(k));
+    searchQuery = matchedKw;                                    // ← THÊM
+    document.getElementById('search-input').value = matchedKw; // ← THÊM
+    renderCards();      
     return `🍽️ Tìm thấy <b>${matched.length} quán</b>:<br><br>` +
       matched.map(q => {
         // ✅ Dùng isOpenNow
