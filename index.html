@@ -1419,7 +1419,15 @@ function closeAdminPanel() {
   window._serverTimestamp = serverTimestamp;
 
   /* ── ADMIN ── */
-  const ADMIN_PASSWORD = 'Huy2007@';
+  const ADMIN_PASSWORD_HASH = '8fed953d81ec333ece58fb7612eb86398ab32a5d94cc258561ff3b73a448477f';
+
+  async function hashPassword(str) {
+    const buf = await crypto.subtle.digest(
+      'SHA-256', new TextEncoder().encode(str)
+    );
+    return Array.from(new Uint8Array(buf))
+      .map(b => b.toString(16).padStart(2, '0')).join('');
+  }
   window.isAdmin = false;
 
   /* ── ADMIN PASSWORD MODAL ── */
@@ -1448,9 +1456,10 @@ document.getElementById('pw-toggle-eye').addEventListener('click', () => {
 });
 
 // Nhấn OK
-function confirmAdmin() {
+async function confirmAdmin() {
   const pw = document.getElementById('pw-input').value;
-  if (pw === ADMIN_PASSWORD) {
+  const hashed = await hashPassword(pw);
+  if (hashed === ADMIN_PASSWORD_HASH) {
     window.isAdmin = true;
     document.getElementById('btn-admin-login').textContent = '✅ Admin • Đăng xuất';
     document.getElementById('btn-admin-login').classList.add('active');
