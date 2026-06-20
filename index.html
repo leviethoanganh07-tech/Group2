@@ -781,6 +781,10 @@ function isOpenNow(openHours) {
 }
 
 function getStatusHtml(openHours) {
+  if (!openHours || openHours.length === 0) {
+    return `<span class="dot" style="background:#F59E0B"></span>
+            <span style="color:#D97706;font-weight:700">Không rõ giờ</span>`;
+  }
   const open = isOpenNow(openHours);
   return open
     ? `<span class="dot dot-open"></span><span class="status-open">Đang mở cửa</span>`
@@ -935,31 +939,55 @@ const RESTAURANTS = [
     mapLink: 'https://maps.app.goo.gl/UogVppN15HHAPsVt9',
     desc: 'Hành trình trải nghiệm ẩm thực ba miền trọn vẹn với mẹt Bún Đậu Mắm Tôm Hà Nội giòn rụm béo ngậy, đĩa Bánh Tráng Cuốn Thịt Heo miền Trung thanh mát chấm mắm nêm đậm vị, và tô Bún Mắm Tây Nam Bộ thơm nồng nàn quyện cùng hải sản tươi ngon và rau đồng nội.',
     keywords: ['bún đậu mắm tôm','bún đậu','mắm tôm','bun dau mam tom','bun dau','bún mắm','bun mam','mam tom','bún','bun','ăn vặt','an vat','bánh tráng cuốn thịt heo','bánh tráng cuốn','bánh tráng','banh trang cuon thit heo','banh trang cuon','banh trang']
+  },
+  {
+    id: 7,
+    name: 'Quán Huyền Trang Bún Mì Quảng',
+    address: '54 Trà Khê 3, Ngũ Hành Sơn, Đà Nẵng',
+    shortAddr: '54 Trà Khê 3, Ngũ Hành Sơn',
+    price: '25k', priceNum: 25000, rating: 4.7,
+    tags: ['Mì quảng','Bún bò'],
+    categories: ['bun'],
+    coverImg: './foodmap/images/huyentrang-cover.jpg',
+    photos: [
+      './foodmap/images/huyentrang1.jpg',
+      './foodmap/images/huyentrang2.jpg',
+      './foodmap/images/huyentrang3.jpg',
+      './foodmap/images/huyentrang4.jpg',
+      './foodmap/images/huyentrang5.jpg'
+    ],
+    openHours: [{ open: '06:00', close: '13:00' }],
+    hours: '06:00 – 13:00',
+    distance: '1,2 km', phone: 'None'
+    mapLat: 15.9771482609734, mapLng: 108.2592012621262,
+    mapLink: 'https://maps.app.goo.gl/fZNmg71GP9uykghW7',
+    desc: 'Mì quảng với sợi mì dai mềm quyện nước nhưn sệt đậm đà, giòn rụm bánh tráng nướng và bùi béo đậu phộng chuẩn vị miền Trung. Bún Bò với nước dùng ninh xương thơm nồng mắm ruốc sả cây, cay tê sa tế quyện cùng nạm bò mềm tan và chả cua béo ngậy.',
+    keywords: ['mì quảng','mì','bún bò','bún','mi quang','mi','bun bo','bun','quang noodle','noodle']
+  },
+  {
+    id: 8,
+    name: 'Quán Nở - Bún, Mì Quảng -Tạp hóa',
+    address: '344 Trần Đại Nghĩa, Ngũ Hành Sơn, Đà Nẵng',
+    shortAddr: '344 Trần Đại Nghĩa, Ngũ Hành Sơn',
+    price: '25k', priceNum: 25000, rating: 4.7,
+    tags: ['Mì quảng','Bún bò'],
+    categories: ['bun'],
+    coverImg: './foodmap/images/huyentrang-cover.jpg',
+    photos: [
+      './foodmap/images/huyentrang1.jpg',
+      './foodmap/images/huyentrang2.jpg',
+      './foodmap/images/huyentrang3.jpg',
+      './foodmap/images/huyentrang4.jpg',
+      './foodmap/images/huyentrang5.jpg'
+    ],
+    openHours: [],
+    hours: 'Chưa cập nhật giờ mở cửa',
+    distance: '2,4 km', phone: '0931 997 410'
+    mapLat: 15.98183887080714, mapLng: 108.25535814618722, 
+    mapLink: 'https://maps.app.goo.gl/c4kg1f7FDmxADZ2Z6',
+    desc: 'Mì quảng với sợi mì dai mềm quyện nước nhưn sệt đậm đà, giòn rụm bánh tráng nướng và bùi béo đậu phộng chuẩn vị miền Trung. Bún Bò với nước dùng ninh xương thơm nồng mắm ruốc sả cây, cay tê sa tế quyện cùng nạm bò mềm tan và chả cua béo ngậy.',
+    keywords: ['mì quảng','mì','bún bò','bún','mi quang','mi','bun bo','bun','quang noodle','noodle']
   }
-  // {
-  //   id: 7,
-  //   name: 'Quán Huyền Trang Bún Mì Quảng',
-  //   address: '54 Trà Khê 3, Ngũ Hành Sơn, Đà Nẵng',
-  //   shortAddr: '54 Trà Khê 3, Ngũ Hành Sơn',
-  //   price: '25k', priceNum: 25000, rating: 4.7,
-  //   tags: ['Mì quảng','Bún bò'],
-  //   categories: ['bun'],
-  //   coverImg: './foodmap/images/huyentrang-cover.jpg',
-  //   photos: [
-  //     './foodmap/images/huyentrang1.jpg',
-  //     './foodmap/images/huyentrang2.jpg',
-  //     './foodmap/images/huyentrang3.jpg',
-  //     './foodmap/images/huyentrang4.jpg',
-  //     './foodmap/images/huyentrang5.jpg'
-  //   ],
-  //   openHours: [{ open: '06:00', close: '13:00' }],
-  //   hours: '06:00 – 13:00',
-  //   distance: '1,2 km', phone: 'None'
-  //   mapLat: 15.9771482609734, mapLng: 108.2592012621262,
-  //   mapLink: 'https://maps.app.goo.gl/fZNmg71GP9uykghW7',
-  //   desc: 'Mì quảng với sợi mì dai mềm quyện nước nhưn sệt đậm đà, giòn rụm bánh tráng nướng và bùi béo đậu phộng chuẩn vị miền Trung. Bún Bò với nước dùng ninh xương thơm nồng mắm ruốc sả cây, cay tê sa tế quyện cùng nạm bò mềm tan và chả cua béo ngậy.',
-  //   keywords: ['mì quảng','mì','bún bò','bún','mi quang','mi','bun bo','bun','quang noodle','noodle']
-  // }
 ];
 
 /* ================================================================
