@@ -608,6 +608,38 @@ main{max-width:1200px;margin:0 auto;padding:32px 24px 80px}
   transform: scale(1.04);
   box-shadow: 0 6px 18px rgba(124,58,237,0.38);
 }
+/* ── ADMIN REPLY ── */
+.review-reply {
+  margin-top: 10px; background: #EFF6FF;
+  border-left: 3px solid #3B82F6; border-radius: 0 8px 8px 0;
+  padding: 8px 12px;
+}
+.review-reply-label {
+  font-size: 11px; font-weight: 800; color: #1D4ED8;
+  margin-bottom: 4px; display: flex; align-items: center; gap: 4px;
+}
+.review-reply-text { font-size: 13px; color: #1E40AF; line-height: 1.5; }
+.reply-form { margin-top: 10px; display: flex; gap: 7px; }
+.reply-input {
+  flex: 1; height: 36px; border: 1.5px solid #BFDBFE;
+  border-radius: 10px; padding: 0 12px;
+  font-family: 'Nunito', sans-serif; font-size: 13px;
+  outline: none; background: white; color: var(--text);
+}
+.reply-input:focus { border-color: #3B82F6; }
+.btn-reply-submit {
+  height: 36px; padding: 0 14px; background: #3B82F6;
+  color: white; border: none; border-radius: 10px;
+  font-size: 12px; font-weight: 800; cursor: pointer;
+  font-family: 'Nunito', sans-serif; transition: background .2s;
+  white-space: nowrap;
+}
+.btn-reply-submit:hover { background: #2563EB; }
+.btn-edit-reply {
+  font-size: 11px; color: #3B82F6; background: none;
+  border: none; cursor: pointer; font-weight: 700;
+  padding: 0; margin-left: 6px;
+}
 </style>
 </head>
 <body>
@@ -1394,7 +1426,7 @@ function closeAdminPanel() {
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
   import { getFirestore, collection, addDoc, query, orderBy,
-           onSnapshot, serverTimestamp, deleteDoc, doc }
+           onSnapshot, serverTimestamp, deleteDoc, doc , updateDoc }
     from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -1551,6 +1583,22 @@ window.toggleAdmin = function() {
         </div>
         <div class="review-item-date">${r.date || ''}</div>
         <div class="review-item-comment">${sanitizeHTML(r.comment || '')}</div>
+        ${r.adminReply ? `
+      <div class="review-reply">
+        <div class="review-reply-label">
+          👑 Admin đã phản hồi
+          ${window.isAdmin ? `<button class="btn-edit-reply" onclick="editReply('${r.id}', ${restaurantId}, this)">✏️ Sửa</button>` : ''}
+        </div>
+        <div class="review-reply-text">${sanitizeHTML(r.adminReply)}</div>
+      </div>` : ''}
+
+      ${window.isAdmin && !r.isAdmin ? `
+        <div class="reply-form" id="reply-form-${r.id}" style="display:${r.adminReply ? 'none' : 'flex'}">
+          <input class="reply-input" id="reply-input-${r.id}"
+            placeholder="Phản hồi đánh giá này..." value="">
+          <button class="btn-reply-submit"
+            onclick="submitReply('${r.id}', ${restaurantId})">↩ Gửi</button>
+        </div>` : ''}
       </div>`).join('');
   });
 };
@@ -1744,6 +1792,28 @@ onSnapshot(_q, (snapshot) => {
   const notif = document.getElementById('suggest-notif');
   if (notif) notif.textContent = snapshot.size;
 });
+/* ── ADMIN REPLY ── */
+window.submitReply = async function(reviewId, restaurantId) {
+  const input = document.getElementById('reply-input-' + reviewId);
+  const text = input.value.trim();
+  if (!text) { alert('✍️ Chưa nhập nội dung phản hồi!'); return; }
+  try {
+    await updateDoc(doc(db, 'reviews_' + restaurantId, reviewId), {
+      adminReply: text
+    });
+    input.value = '';
+  } catch(e) { alert('❌ Lỗi: ' + e.message); }
+};
+
+window.editReply = function(reviewId, restaurantId, btn) {
+  const replyDiv = btn.closest('.review-reply');
+  const replyText = replyDiv.querySelector('.review-reply-text').textContent;
+  const form = document.getElementById('reply-form-' + reviewId);
+  const input = document.getElementById('reply-input-' + reviewId);
+  input.value = replyText;
+  form.style.display = 'flex';
+  input.focus();
+};
 </script>
 <!-- ADMIN PASSWORD MODAL -->
 <div class="pw-overlay" id="pw-overlay">
