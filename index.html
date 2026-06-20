@@ -595,6 +595,19 @@ main{max-width:1200px;margin:0 auto;padding:32px 24px 80px}
   border-color: #EF4444;
   box-shadow: 0 2px 10px rgba(239,68,68,0.3);
 }
+.suggest-inline-btn {
+  padding: 8px 18px; border-radius: 22px;
+  background: linear-gradient(135deg, #7C3AED, #A855F7);
+  color: white; border: none; margin-left: auto;
+  font-family: 'Nunito', sans-serif; font-size: 13px;
+  font-weight: 700; cursor: pointer;
+  box-shadow: 0 4px 12px rgba(124,58,237,0.28);
+  transition: all .2s; white-space: nowrap;
+}
+.suggest-inline-btn:hover {
+  transform: scale(1.04);
+  box-shadow: 0 6px 18px rgba(124,58,237,0.38);
+}
 </style>
 </head>
 <body>
@@ -642,7 +655,7 @@ main{max-width:1200px;margin:0 auto;padding:32px 24px 80px}
     <button class="tab" data-cat="do-uong">🧋 Đồ uống</button>
     <button class="tab" data-cat="banh-mi">🥖 Bánh mì</button>
     <button class="tab" data-cat="an-vat">🍦 Ăn vặt </button>
-    <button class="tab" style="background:linear-gradient(135deg,#7C3AED,#A855F7);color:white;border-color:transparent;margin-left:auto" onclick="openSuggest()">Nếu bạn có quán nào thì đề xuất bọn mình với nhé 🫶🏻</button>
+    <button class="suggest-inline-btn" onclick="openSuggest()">Nếu bạn có quán nào thì đề xuất bọn mình với nhé 🫶🏻</button>
   </div>
   <div class="section-label">
     <h2>🗺️ Danh sách quán ăn</h2>
