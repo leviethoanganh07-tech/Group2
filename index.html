@@ -1024,6 +1024,9 @@ document.querySelectorAll('.tab').forEach(btn => {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
     currentFilter = btn.dataset.cat;
+    // Reset search khi đổi tab
+    searchQuery = '';
+    document.getElementById('search-input').value = '';
     renderCards();
   });
 });
