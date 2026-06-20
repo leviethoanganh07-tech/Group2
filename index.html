@@ -1127,7 +1127,7 @@ function renderCards() {
         <div class="card-img-overlay"></div>
         <div class="card-tags-row">
           <span class="ctag ctag-a">${r.tags[0]}</span>
-          <span class="ctag ctag-b">${r.tags[1]}</span>
+          ${r.tags[1] ? `<span class="ctag ctag-b">${r.tags[1]}</span>` : ''}
         </div>
         <span class="viewed-chip">✓ Đã xem</span>
       </div>
