@@ -775,6 +775,16 @@ main{max-width:1200px;margin:0 auto;padding:32px 24px 80px}
 </div>
 
 <script>
+/* ── CHỐNG XSS ── */
+function sanitizeHTML(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
 /* ================================================================
    MOCK DATA – ảnh thực tế từ Unsplash (free, no auth needed)
    Mỗi quán có: 1 ảnh bìa (coverImg) + mảng photos (gallery)
@@ -1531,7 +1541,7 @@ window.toggleAdmin = function() {
           ${window.isAdmin ? `<button class="btn-delete-review" onclick="deleteReview('${r.id}', ${restaurantId})">🗑️ Xóa</button>` : ''}
         </div>
         <div class="review-item-date">${r.date || ''}</div>
-        <div class="review-item-comment">${r.comment || ''}</div>
+        <div class="review-item-comment">${sanitizeHTML(r.comment || '')}</div>`
       </div>`).join('');
   });
 };
@@ -1695,16 +1705,16 @@ window.loadSuggestions = function() {
         <div class="suggest-card">
           <div class="suggest-card-top">
             <div>
-              <div class="suggest-card-name">🏪 ${s.name}</div>
+              <div class="suggest-card-name">🏪 ${sanitizeHTML(s.name)}</div>
               <div class="suggest-card-meta">
-                📍 ${s.addr}
-                ${s.price ? ` &nbsp;·&nbsp; 💵 ${s.price}` : ''}
+                📍 ${sanitizeHTML(s.addr)}
+                ${s.price ? ` &nbsp;·&nbsp; 💵 ${sanitizeHTML(s.price)}
               </div>
             </div>
             <button class="btn-delete-suggest" onclick="deleteSuggest('${d.id}')">🗑️ Xóa</button>
           </div>
           ${s.imgUrl ? `<img class="suggest-card-img" src="${s.imgUrl}" style="display:block">` : ''}
-          <div class="suggest-card-reason">"${s.reason}"</div>
+          <div class="suggest-card-reason">"${sanitizeHTML(s.reason)}"</div>
           <div class="suggest-card-date">📅 ${s.date || ''}</div>
         </div>`;
     }).join('');
