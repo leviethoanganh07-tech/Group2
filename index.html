@@ -762,11 +762,6 @@ main{max-width:1200px;margin:0 auto;padding:32px 24px 80px}
 </div>
 
 <script>
-function clearChatFilter() {
-  searchQuery = '';
-  document.getElementById('search-input').value = '';
-  renderCards();
-}
 /* ================================================================
    MOCK DATA – ảnh thực tế từ Unsplash (free, no auth needed)
    Mỗi quán có: 1 ảnh bìa (coverImg) + mảng photos (gallery)
@@ -1275,11 +1270,16 @@ if (['ngon','ngon nhất','rating cao','nhiều sao'].some(k => text.includes(k)
         const open = isOpenNow(q.openHours);
         return `${q.name}<br>📍 ${q.shortAddr} · 💵 ${q.price} · ⭐${q.rating}<br>` +
           `<span style="color:${open?'#16A34A':'#DC2626'};font-weight:700">${open?'🟢 Mở':'🔴 Đóng'}</span>`;
-      }).join('<br><br>') + '<br><br>💡 <i>Click card để xem bản đồ & ảnh!</i>';
+      }).join('<br><br>') + '<br><br>🔍 <i>Trang chủ đã lọc theo món bạn chọn!</i>' +
+'<br><a href="#" onclick="clearChatFilter()" style="color:#FF6B35;font-weight:700;font-size:12px">✕ Xem tất cả quán</a>';
   }
   return '😅 Mình chưa hiểu ý bạn! Thử: <b>"cơm gà"</b>, <b>"trà sữa"</b>, <b>"rẻ nhất"</b>, <b>"ngon nhất"</b>';
 }
-
+function clearChatFilter() {
+  searchQuery = '';
+  document.getElementById('search-input').value = '';
+  renderCards();
+}
 /* ── INIT ── */
 renderCards();
 /* ── SUGGEST MODAL ── */
