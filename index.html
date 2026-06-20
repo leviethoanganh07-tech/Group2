@@ -1534,14 +1534,14 @@ window.toggleAdmin = function() {
       <div class="review-item ${r.isAdmin ? 'admin-review' : ''}">
         <div class="review-item-top">
           <span class="review-item-name ${r.isAdmin ? 'admin-name' : ''}">
-            ${r.isAdmin ? '👑' : '👤'} ${r.isAdmin ? 'Admin' : (r.name || 'Ẩn danh')}
+            ${r.isAdmin ? '👑' : '👤'} ${r.isAdmin ? 'Admin' : sanitizeHTML(r.name || 'Ẩn danh')}
             ${r.isAdmin ? '<span class="admin-badge">ADMIN</span>' : ''}
           </span>
           ${r.rating ? `<span class="review-item-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span>` : ''}
           ${window.isAdmin ? `<button class="btn-delete-review" onclick="deleteReview('${r.id}', ${restaurantId})">🗑️ Xóa</button>` : ''}
         </div>
         <div class="review-item-date">${r.date || ''}</div>
-        <div class="review-item-comment">${sanitizeHTML(r.comment || '')}</div>`
+        <div class="review-item-comment">${sanitizeHTML(r.comment || '')}</div>
       </div>`).join('');
   });
 };
@@ -1708,7 +1708,7 @@ window.loadSuggestions = function() {
               <div class="suggest-card-name">🏪 ${sanitizeHTML(s.name)}</div>
               <div class="suggest-card-meta">
                 📍 ${sanitizeHTML(s.addr)}
-                ${s.price ? ` &nbsp;·&nbsp; 💵 ${sanitizeHTML(s.price)}
+                ${s.price ? ` &nbsp;·&nbsp; 💵 ${sanitizeHTML(s.price)}` : ''}
               </div>
             </div>
             <button class="btn-delete-suggest" onclick="deleteSuggest('${d.id}')">🗑️ Xóa</button>
