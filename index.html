@@ -1776,14 +1776,13 @@ if (!r.openHours || r.openHours.length === 0) {
     `<span style="color:${isOpen?'#16A34A':'#DC2626'};font-weight:700">
     ${isOpen?'🟢 Đang mở':'🔴 Đóng cửa'}</span> · ${r.hours}`;
 }
-// Thêm sau modal-hours
-  const travel = getTravelTime(r.distance);
-  document.getElementById('modal-travel').innerHTML = travel
-    ? `🚶 Đi bộ <b>${travel.walk} phút</b> &nbsp;·&nbsp; 🏍️ Đi xe <b>${travel.bike} phút</b> từ FPT Đà Nẵng`
-    : 'Chưa có thông tin khoảng cách';
-
+ const travel = getTravelTime(r.distance);
+ document.getElementById('modal-travel').innerHTML = travel
+   ? `🚶 Đi bộ <b>${travel.walk} phút</b> &nbsp;·&nbsp; 🏍️ Đi xe <b>${travel.bike} phút</b> từ FPT Đà Nẵng`
+   : 'Chưa có thông tin khoảng cách';
+  
   // Gallery
-  renderGallery(r.photos);
+ renderGallery(r.photos);
 
   // Map
   document.getElementById('modal-map').src =
