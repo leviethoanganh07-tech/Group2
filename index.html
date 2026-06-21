@@ -702,7 +702,7 @@ main{max-width:1200px;margin:0 auto;padding:32px 24px 80px}
   <p>Khám phá các quán ăn ngon, giá sinh viên tại khu FPT City Ngũ Hành Sơn</p>
   <div class="hero-stats">
     <div class="hero-stat"><span class="hs-val">20</span><span class="hs-lbl">Quán gần đây</span></div>
-    <div class="hero-stat"><span class="hs-val">4.43 ⭐</span><span class="hs-lbl">Đánh giá TB</span></div>
+    <div class="hero-stat"><span class="hs-val" id="hero-avg-rating">—</span><span class="hs-lbl">Đánh giá TB</span></div>
     <div class="hero-stat"><span class="hs-val">10k–45k</span><span class="hs-lbl">Khoảng giá</span></div>
     <div class="hero-stat"><span class="hs-val">&lt;5 km</span><span class="hs-lbl">Khoảng cách</span></div>
   </div>
@@ -869,8 +869,8 @@ function isOpenNow(openHours) {
 
 function getStatusHtml(openHours) {
   if (!openHours || openHours.length === 0) {
-    return `<span class="dot" style="background:#F59E0B"></span>
-            <span style="color:#D97706;font-weight:700">Không rõ giờ</span>`;
+    return `<span class="dot" style="background:#F59E0B;box-shadow:0 0 0 2px rgba(245,158,11,0.2)"></span>
+            <span style="color:#D97706;font-weight:700">Chưa cập nhật giờ</span>`;
   }
   const open = isOpenNow(openHours);
   return open
@@ -1410,10 +1410,15 @@ function openModal(r) {
   document.getElementById('modal-desc').textContent = r.desc;
 
   // ✅ MỚI
-const isOpen = isOpenNow(r.openHours);
-document.getElementById('modal-hours').innerHTML =
-  `<span style="color:${isOpen?'#16A34A':'#DC2626'};font-weight:700">
-  ${isOpen?'🟢 Đang mở':'🔴 Đóng cửa'}</span> · ${r.hours}`;
+if (!r.openHours || r.openHours.length === 0) {
+  document.getElementById('modal-hours').innerHTML =
+    `<span style="color:#D97706;font-weight:700">🟡 Chưa cập nhật giờ</span> · ${r.hours}`;
+} else {
+  const isOpen = isOpenNow(r.openHours);
+  document.getElementById('modal-hours').innerHTML =
+    `<span style="color:${isOpen?'#16A34A':'#DC2626'};font-weight:700">
+    ${isOpen?'🟢 Đang mở':'🔴 Đóng cửa'}</span> · ${r.hours}`;
+}
 
   // Gallery
   renderGallery(r.photos);
@@ -1631,8 +1636,34 @@ function clearChatFilter() {
   document.getElementById('search-input').value = '';
   renderCards();
 }
+/* ── TÍNH SAO TRUNG BÌNH HERO ── */
+function updateHeroRating() {
+  const el = document.getElementById('hero-avg-rating');
+  if (!el) return;
+
+  // Rating GG Maps từ data
+  const ggRatings = RESTAURANTS
+    .filter(r => r.rating && r.rating > 0)
+    .map(r => r.rating);
+
+  // Rating cộng đồng từ Firebase cache
+  const userRatings = Object.values(window._userRatings || {})
+    .filter(r => r && r.avg > 0)
+    .map(r => r.avg);
+
+  const allRatings = [...ggRatings, ...userRatings];
+
+  if (allRatings.length === 0) {
+    el.textContent = '— ⭐';
+    return;
+  }
+
+  const avg = allRatings.reduce((s, r) => s + r, 0) / allRatings.length;
+  el.textContent = avg.toFixed(2) + ' ⭐';
+}
 /* ── INIT ── */
 renderCards();
+updateHeroRating();
 /* ── SUGGEST MODAL ── */
 function openSuggest() {
   document.getElementById('suggest-overlay').classList.add('open');
@@ -1900,6 +1931,7 @@ window._userRatings[r.id] = {
   avg, avgStr: avg.toFixed(1), count: starOnly.length
 };
 renderCards();
+updateHeroRating();
     });
   });
 }
