@@ -640,6 +640,36 @@ main{max-width:1200px;margin:0 auto;padding:32px 24px 80px}
   border: none; cursor: pointer; font-weight: 700;
   padding: 0; margin-left: 6px;
 }
+/* ── COMING SOON CARD ── */
+.food-card.coming-soon {
+  pointer-events: none;
+  opacity: 0.82;
+}
+.food-card.coming-soon .card-img::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.35);
+}
+.coming-soon-badge {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #FF6B35, #FFB830);
+  color: white; font-family: 'Sora', sans-serif;
+  font-size: 14px; font-weight: 800;
+  padding: 8px 18px; border-radius: 20px;
+  white-space: nowrap; z-index: 3;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  letter-spacing: 0.5px;
+}
+.food-card.coming-soon .card-price {
+  color: var(--text-muted);
+  font-size: 13px; font-weight: 600;
+}
+.card-img.no-img {
+  background: linear-gradient(135deg, #FFE8CC 0%, #FFCF80 100%);
+  font-size: 64px;
+  display: flex; align-items: center; justify-content: center;
+}
 </style>
 </head>
 <body>
@@ -1070,7 +1100,28 @@ const RESTAURANTS = [
     mapLink: 'https://maps.app.goo.gl/bTUbrgBy7HuQDJG39',
     desc: 'Quán cơm cô Sáu mang đến bữa cơm tự chọn chuẩn vị nhà làm với thực đơn hơn 10 món thay đổi mỗi ngày, đảm bảo ngon sạch, đủ chất và giá cả bình dân.',
     keywords: ['cơm tự chọn','cơm','com tu chon','com']
-  }
+  },
+  {
+  id: 10,
+  name: 'Ốp ',
+  address: '242 Trần Đại Nghĩa, Ngũ Hành Sơn, Đà Nẵng',
+  price: 'Đang cập nhật',
+  priceNum: 0,
+  rating: 0,
+  tags: ['Sắp ra mắt'],
+  categories: ['bánh mì'],
+  coverImg: '',
+  photos: [],
+  openHours: [],
+  hours: 'Sắp khai trương',
+  distance: '—',
+  phone: '—',
+  mapLat: 0, mapLng: 0,
+  mapLink: '#',
+  desc: 'Quán sắp ra mắt, hãy đón chờ nhé!',
+  keywords: [],
+  comingSoon: true
+},
 ];
 
 /* ================================================================
@@ -1117,20 +1168,22 @@ function renderCards() {
   grid.innerHTML = '';
   data.forEach((r, i) => {
     const card = document.createElement('div');
-    card.className = 'food-card' + (viewed.has(r.id) ? ' viewed' : '');
+    card.className = 'food-card' + (viewed.has(r.id) ? ' viewed' : '')+ (r.comingSoon ? ' coming-soon' : '');
     card.dataset.id = r.id;
     card.style.animationDelay = (i * 0.07) + 's';
     card.innerHTML = `
-      <div class="card-img">
-        <img src="${r.coverImg}" alt="${r.name}" loading="lazy"
-          onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=600&q=75&fm=webp&auto=compress'">
-        <div class="card-img-overlay"></div>
-        <div class="card-tags-row">
-          <span class="ctag ctag-a">${r.tags[0]}</span>
-          ${r.tags[1] ? `<span class="ctag ctag-b">${r.tags[1]}</span>` : ''}
-        </div>
-        <span class="viewed-chip">✓ Đã xem</span>
+    <div class="card-img ${!r.coverImg ? 'no-img' : ''}">
+      ${!r.coverImg ? '<span style="font-size:64px">🍽️</span>' : ''}
+      ${r.coverImg ? `<img src="${r.coverImg}" alt="${r.name}" loading="lazy"
+        onerror="this.onerror=null;this.style.display='none'">` : ''}
+      <div class="card-img-overlay"></div>
+      ${r.comingSoon ? '<div class="coming-soon-badge">🔜 Sắp ra mắt</div>' : ''}
+      <div class="card-tags-row">
+        <span class="ctag ctag-a">${r.tags[0]}</span>
+        ${r.tags[1] ? `<span class="ctag ctag-b">${r.tags[1]}</span>` : ''}
       </div>
+      <span class="viewed-chip">✓ Đã xem</span>
+    </div>
       <div class="card-body">
         <div class="card-name">${r.name}</div>
         <div class="card-addr"><span class="pin">📍</span><span>${r.address}</span></div>
