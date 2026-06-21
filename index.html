@@ -939,6 +939,7 @@ main{max-width:1200px;margin:0 auto;padding:32px 24px 80px}
     <div class="modal-body">
       <div class="modal-info-line"><span class="ico">📍</span><span id="modal-addr"></span></div>
       <div class="modal-info-line"><span class="ico">🕐</span><span id="modal-hours"></span></div>
+      <div class="modal-info-line"><span class="ico">🗺️</span><span id="modal-travel"></span></div>
       <div class="modal-info-line"><span class="ico">📞</span><span id="modal-phone"></span></div>
       <div class="stats-grid">
         <div class="stat-box"><span class="sv" id="modal-price-stat"></span><span class="sl">Giá TB / người</span></div>
@@ -1775,6 +1776,11 @@ if (!r.openHours || r.openHours.length === 0) {
     `<span style="color:${isOpen?'#16A34A':'#DC2626'};font-weight:700">
     ${isOpen?'🟢 Đang mở':'🔴 Đóng cửa'}</span> · ${r.hours}`;
 }
+// Thêm sau modal-hours
+const travel = getTravelTime(r.distance);
+document.getElementById('modal-travel').innerHTML = travel
+  ? `🚶 Đi bộ <b>${travel.walk} phút</b> &nbsp;·&nbsp; 🏍️ Đi xe <b>${travel.bike} phút</b> từ FPT Đà Nẵng`
+  : 'Chưa có thông tin khoảng cách';
 
   // Gallery
   renderGallery(r.photos);
