@@ -1775,22 +1775,23 @@ if (!r.openHours || r.openHours.length === 0) {
   document.getElementById('modal-hours').innerHTML =
     `<span style="color:${isOpen?'#16A34A':'#DC2626'};font-weight:700">
     ${isOpen?'🟢 Đang mở':'🔴 Đóng cửa'}</span> · ${r.hours}`;
-  const travel = getTravelTime(r.distance);
-  document.getElementById('modal-travel').innerHTML = travel
-   ? `🚶 Đi bộ <b>${travel.walk} phút</b> &nbsp;·&nbsp; 🏍️ Đi xe <b>${travel.bike} phút</b> từ FUDA`
-   : 'Chưa có thông tin khoảng cách';
-  
-  // Gallery
-  renderGallery(r.photos);
-  
-  // Map
-  document.getElementById('modal-map').src =
-    `https://maps.google.com/maps?q=${r.mapLat},${r.mapLng}&t=&z=17&ie=UTF8&iwloc=&output=embed`;
-  
-  document.getElementById('overlay').classList.add('open');
-  document.body.style.overflow = 'hidden';
-  window._currentRestId = r.id;
-  loadReviews(r.id);
+}
+const travel = getTravelTime(r.distance);
+document.getElementById('modal-travel').innerHTML = travel
+ ? `🚶 Đi bộ <b>${travel.walk} phút</b> &nbsp;·&nbsp; 🏍️ Đi xe <b>${travel.bike} phút</b> từ FUDA`
+ : 'Chưa có thông tin khoảng cách';
+
+// Gallery
+renderGallery(r.photos);
+
+// Map
+document.getElementById('modal-map').src =
+  `https://maps.google.com/maps?q=${r.mapLat},${r.mapLng}&t=&z=17&ie=UTF8&iwloc=&output=embed`;
+
+document.getElementById('overlay').classList.add('open');
+document.body.style.overflow = 'hidden';
+window._currentRestId = r.id;
+loadReviews(r.id);
 }
 
 function renderGallery(photos) {
