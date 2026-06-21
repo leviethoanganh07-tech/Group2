@@ -859,7 +859,65 @@ main{max-width:1200px;margin:0 auto;padding:32px 24px 80px}
     <button class="tab" data-cat="do-uong">🧋 Đồ uống</button>
     <button class="tab" data-cat="banh-mi">🥖 Bánh mì</button>
     <button class="tab" data-cat="an-vat">🍦 Ăn vặt </button>
+    <button class="filter-advanced-btn" id="filter-advanced-btn" onclick="toggleFilterPanel()">
+      ⚙️ Lọc nâng cao
+      <span id="filter-badge" style="display:none;background:#FF6B35;color:white;border-radius:10px;padding:1px 7px;font-size:11px">!</span>
+    </button>
     <button class="suggest-inline-btn" onclick="openSuggest()">Nếu bạn biết quán nào thì đề xuất bọn mình với nhé 🫶🏻</button>
+  </div>
+  <!-- ADVANCED FILTER PANEL -->
+  <div class="filter-panel" id="filter-panel">
+    <div class="filter-panel-grid">
+      <div>
+        <div class="filter-group-label">📍 Khoảng cách</div>
+        <div class="filter-chips" id="fc-distance">
+          <button class="fchip active" data-val="all">Tất cả</button>
+          <button class="fchip" data-val="0.5">&lt; 500m</button>
+          <button class="fchip" data-val="1">&lt; 1 km</button>
+          <button class="fchip" data-val="2">&lt; 2 km</button>
+          <button class="fchip" data-val="3">&lt; 3 km</button>
+        </div>
+      </div>
+      <div>
+        <div class="filter-group-label">💵 Giá tiền</div>
+        <div class="filter-chips" id="fc-price">
+          <button class="fchip active" data-val="all">Tất cả</button>
+          <button class="fchip" data-val="20">&lt; 20k</button>
+          <button class="fchip" data-val="35">20–35k</button>
+          <button class="fchip" data-val="50">35–50k</button>
+          <button class="fchip" data-val="99">&gt; 50k</button>
+        </div>
+      </div>
+      <div>
+        <div class="filter-group-label">⭐ Đánh giá</div>
+        <div class="filter-chips" id="fc-star">
+          <button class="fchip active" data-val="all">Tất cả</button>
+          <button class="fchip" data-val="3.5">3.5+</button>
+          <button class="fchip" data-val="4">4.0+</button>
+          <button class="fchip" data-val="4.5">4.5+</button>
+        </div>
+      </div>
+      <div>
+        <div class="filter-group-label">🌙 Đặc biệt</div>
+        <div class="filter-chips">
+          <button class="fchip fchip-late" id="fc-late" onclick="toggleLateNight()">🌙 Ăn khuya (sau 22h)</button>
+        </div>
+      </div>
+      <div>
+        <div class="filter-group-label">↕️ Sắp xếp</div>
+        <div class="filter-chips" id="fc-sort">
+          <button class="fchip active" data-val="default">Mặc định</button>
+          <button class="fchip" data-val="distance">Gần nhất</button>
+          <button class="fchip" data-val="price-asc">Giá thấp</button>
+          <button class="fchip" data-val="price-desc">Giá cao</button>
+          <button class="fchip" data-val="star">Sao cao</button>
+        </div>
+      </div>
+    </div>
+    <div class="filter-panel-footer">
+      <button class="btn-filter-reset" onclick="resetFilters()">↺ Đặt lại</button>
+      <button class="btn-filter-apply" onclick="toggleFilterPanel()">✓ Áp dụng</button>
+    </div>
   </div>
   <div class="section-label">
     <h2>🗺️ Danh sách quán ăn</h2>
@@ -1549,7 +1607,13 @@ let lbIndex = 0;
 ================================================================ */
 function getFiltered() {
   let data = RESTAURANTS;
-  if (currentFilter !== 'all') data = data.filter(r => r.categories.includes(currentFilter));
+
+  // Filter tab category
+  if (currentFilter !== 'all') {
+    data = data.filter(r => r.categories.includes(currentFilter));
+  }
+
+  // Search query
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
     data = data.filter(r =>
@@ -1559,6 +1623,44 @@ function getFiltered() {
       r.keywords.some(k => k.includes(q))
     );
   }
+
+  // Distance filter
+  if (filterDistance !== 'all') {
+    const maxKm = parseFloat(filterDistance);
+    data = data.filter(r => parseDistance(r.distance) <= maxKm);
+  }
+
+  // Price filter
+  if (filterPrice !== 'all') {
+    const max = parseFloat(filterPrice);
+    if (max === 20)  data = data.filter(r => r.priceNum > 0 && r.priceNum <= 20000);
+    if (max === 35)  data = data.filter(r => r.priceNum > 20000 && r.priceNum <= 35000);
+    if (max === 50)  data = data.filter(r => r.priceNum > 35000 && r.priceNum <= 50000);
+    if (max === 99)  data = data.filter(r => r.priceNum > 50000);
+  }
+
+  // Star filter
+  if (filterStar !== 'all') {
+    const minStar = parseFloat(filterStar);
+    data = data.filter(r => getEffectiveStar(r) >= minStar);
+  }
+
+  // Late night filter
+  if (filterLateNight) {
+    data = data.filter(r => isLateNight(r.openHours));
+  }
+
+  // Sort
+  if (filterSort === 'distance') {
+    data = [...data].sort((a, b) => parseDistance(a.distance) - parseDistance(b.distance));
+  } else if (filterSort === 'price-asc') {
+    data = [...data].sort((a, b) => a.priceNum - b.priceNum);
+  } else if (filterSort === 'price-desc') {
+    data = [...data].sort((a, b) => b.priceNum - a.priceNum);
+  } else if (filterSort === 'star') {
+    data = [...data].sort((a, b) => getEffectiveStar(b) - getEffectiveStar(a));
+  }
+
   return data;
 }
 
@@ -1594,6 +1696,14 @@ function renderCards() {
       <div class="card-body">
         <div class="card-name">${r.name}</div>
         <div class="card-addr"><span class="pin">📍</span><span>${r.address}</span></div>
+        // Sau </div> của card-addr, thêm:
+        ${(() => {
+          const t = getTravelTime(r.distance);
+          return t ? `<div class="card-travel">
+            <span class="card-travel-chip">🚶 ${t.walk} phút</span>
+            <span class="card-travel-chip">🏍️ ${t.bike} phút</span>
+          </div>` : '';
+        })()}
         <div class="card-footer">
           <span class="card-price">💵 ${r.price}</span>
           <div class="card-right-col">
@@ -1906,6 +2016,267 @@ function updateHeroRating() {
 
   const avg = allRatings.reduce((s, r) => s + r, 0) / allRatings.length;
   el.textContent = avg.toFixed(2) + ' ⭐';
+}
+/* ================================================================
+   ADVANCED FILTER STATE
+================================================================ */
+let filterDistance = 'all';
+let filterPrice    = 'all';
+let filterStar     = 'all';
+let filterLateNight = false;
+let filterSort     = 'default';
+
+function toggleFilterPanel() {
+  const panel = document.getElementById('filter-panel');
+  const btn   = document.getElementById('filter-advanced-btn');
+  panel.classList.toggle('open');
+  btn.classList.toggle('active');
+}
+
+function toggleLateNight() {
+  filterLateNight = !filterLateNight;
+  const btn = document.getElementById('fc-late');
+  btn.classList.toggle('active', filterLateNight);
+  updateFilterBadge();
+  renderCards();
+}
+
+function resetFilters() {
+  filterDistance = 'all'; filterPrice = 'all';
+  filterStar = 'all'; filterLateNight = false; filterSort = 'default';
+  document.querySelectorAll('.filter-chips .fchip').forEach(c => {
+    c.classList.toggle('active', c.dataset.val === 'all' || c.dataset.val === 'default');
+  });
+  document.getElementById('fc-late').classList.remove('active');
+  updateFilterBadge();
+  renderCards();
+}
+
+function updateFilterBadge() {
+  const hasFilter = filterDistance !== 'all' || filterPrice !== 'all' ||
+                    filterStar !== 'all' || filterLateNight || filterSort !== 'default';
+  document.getElementById('filter-badge').style.display = hasFilter ? 'inline' : 'none';
+}
+
+// Filter chip click handlers
+['fc-distance','fc-price','fc-star','fc-sort'].forEach(groupId => {
+  document.getElementById(groupId)?.addEventListener('click', e => {
+    const chip = e.target.closest('.fchip');
+    if (!chip) return;
+    document.querySelectorAll(`#${groupId} .fchip`).forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    const val = chip.dataset.val;
+    if (groupId === 'fc-distance') filterDistance = val;
+    if (groupId === 'fc-price')    filterPrice    = val;
+    if (groupId === 'fc-star')     filterStar     = val;
+    if (groupId === 'fc-sort')     filterSort     = val;
+    updateFilterBadge();
+    renderCards();
+  });
+});
+
+/* ── HELPER: parse distance string → km number ── */
+function parseDistance(str) {
+  if (!str || str === '—') return 999;
+  const n = parseFloat(str.replace(',', '.'));
+  if (str.toLowerCase().includes('m') && !str.toLowerCase().includes('km')) return n / 1000;
+  return n;
+}
+
+/* ── TRAVEL TIME (từ FPT Đà Nẵng) ── */
+function getTravelTime(distanceStr) {
+  const km = parseDistance(distanceStr);
+  if (km >= 999) return null;
+  const walkMin  = Math.round(km / 5  * 60);
+  const bikeMin  = Math.round(km / 25 * 60);
+  return {
+    walk: walkMin  < 1 ? '&lt;1' : walkMin,
+    bike: bikeMin  < 1 ? '&lt;1' : bikeMin
+  };
+}
+
+/* ── LATE NIGHT CHECK ── */
+function isLateNight(openHours) {
+  if (!openHours || openHours.length === 0) return false;
+  return openHours.some(({ close }) => {
+    const [h] = close.split(':').map(Number);
+    return h >= 22 || h <= 3;
+  });
+}
+
+/* ── GET EFFECTIVE STAR ── */
+function getEffectiveStar(r) {
+  const ur = window._userRatings && window._userRatings[r.id];
+  return ur && ur.avg > 0 ? ur.avg : (r.rating || 0);
+}
+
+/* ================================================================
+   SPIN WHEEL
+================================================================ */
+let wheelItems    = [];
+let wheelAngle    = 0;
+let wheelSpinning = false;
+let wheelCat      = 'all';
+
+const WHEEL_COLORS = [
+  '#FF6B35','#FFB830','#A855F7','#22C55E',
+  '#3B82F6','#F43F5E','#F59E0B','#8B5CF6',
+  '#EC4899','#14B8A6','#EF4444','#6366F1'
+];
+
+function openWheel() {
+  document.getElementById('wheel-overlay').classList.add('open');
+  updateWheelItems('all');
+}
+
+function closeWheel() {
+  document.getElementById('wheel-overlay').classList.remove('open');
+}
+
+function updateWheelItems(cat) {
+  wheelCat = cat;
+  let items = RESTAURANTS.filter(r => !r.comingSoon);
+  if (cat !== 'all' && cat !== 'custom') {
+    items = items.filter(r => r.categories.includes(cat));
+  }
+  wheelItems = items;
+  document.getElementById('wheel-result').innerHTML = '';
+  drawWheel();
+}
+
+function updateWheelFromCustom() {
+  const q = document.getElementById('wheel-custom-input').value.trim().toLowerCase();
+  if (!q) { wheelItems = RESTAURANTS.filter(r => !r.comingSoon); }
+  else {
+    wheelItems = RESTAURANTS.filter(r =>
+      !r.comingSoon && (
+        r.name.toLowerCase().includes(q) ||
+        r.keywords.some(k => k.includes(q)) ||
+        r.tags.some(t => t.toLowerCase().includes(q))
+      )
+    );
+  }
+  document.getElementById('wheel-result').innerHTML = '';
+  drawWheel();
+}
+
+document.getElementById('wheel-options')?.addEventListener('click', e => {
+  const opt = e.target.closest('.wheel-opt');
+  if (!opt) return;
+  document.querySelectorAll('.wheel-opt').forEach(o => o.classList.remove('active'));
+  opt.classList.add('active');
+  const cat = opt.dataset.cat;
+  const customInput = document.getElementById('wheel-custom-input');
+  if (cat === 'custom') {
+    customInput.style.display = 'block';
+    customInput.focus();
+    updateWheelFromCustom();
+  } else {
+    customInput.style.display = 'none';
+    updateWheelItems(cat);
+  }
+});
+
+function drawWheel() {
+  const canvas = document.getElementById('wheel-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const cx = canvas.width / 2, cy = canvas.height / 2;
+  const r  = Math.min(cx, cy) - 8;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  if (!wheelItems.length) {
+    ctx.fillStyle = '#F3F4F6';
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, 2 * Math.PI); ctx.fill();
+    ctx.fillStyle = '#9CA3AF'; ctx.font = 'bold 13px Nunito';
+    ctx.textAlign = 'center'; ctx.fillText('Không có quán', cx, cy - 8);
+    ctx.fillText('phù hợp', cx, cy + 10);
+    return;
+  }
+
+  const seg = (2 * Math.PI) / wheelItems.length;
+  wheelItems.forEach((item, i) => {
+    const start = wheelAngle + i * seg;
+    const end   = start + seg;
+    ctx.beginPath(); ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, start, end); ctx.closePath();
+    ctx.fillStyle = WHEEL_COLORS[i % WHEEL_COLORS.length]; ctx.fill();
+    ctx.strokeStyle = 'white'; ctx.lineWidth = 2; ctx.stroke();
+
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(start + seg / 2);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = 'white';
+    ctx.font = `bold ${wheelItems.length > 8 ? 10 : 12}px Nunito`;
+    const txt = item.name.length > 18 ? item.name.slice(0, 18) + '…' : item.name;
+    ctx.fillText(txt, r - 12, 4);
+    ctx.restore();
+  });
+
+  // Center
+  ctx.beginPath(); ctx.arc(cx, cy, 22, 0, 2 * Math.PI);
+  ctx.fillStyle = 'white'; ctx.fill();
+  ctx.strokeStyle = '#7C3AED'; ctx.lineWidth = 3; ctx.stroke();
+  ctx.fillStyle = '#7C3AED'; ctx.font = 'bold 16px Nunito';
+  ctx.textAlign = 'center'; ctx.fillText('🎡', cx, cy + 6);
+}
+
+function spinWheel() {
+  if (wheelSpinning || wheelItems.length === 0) return;
+  wheelSpinning = true;
+  document.getElementById('btn-spin').disabled = true;
+  document.getElementById('btn-spin').textContent = '🎰 Đang quay...';
+  document.getElementById('wheel-result').innerHTML = '';
+
+  const extraRot  = (Math.random() * 4 + 6) * Math.PI * 2;
+  const duration  = 4500;
+  const startTime = performance.now();
+  const startAngle = wheelAngle;
+
+  function animate(now) {
+    const elapsed  = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased    = 1 - Math.pow(1 - progress, 4);
+    wheelAngle     = startAngle + extraRot * eased;
+    drawWheel();
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      wheelSpinning = false;
+      document.getElementById('btn-spin').disabled = false;
+      document.getElementById('btn-spin').textContent = '🎰 QUAY NGAY!';
+      showWheelResult();
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
+function showWheelResult() {
+  const seg = (2 * Math.PI) / wheelItems.length;
+  const norm = ((-wheelAngle - Math.PI / 2) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+  const idx  = Math.floor(norm / seg) % wheelItems.length;
+  const r    = wheelItems[idx];
+  const travel = getTravelTime(r.distance);
+
+  document.getElementById('wheel-result').innerHTML = `
+    <div class="wheel-result-card">
+      <div style="font-size:36px;margin-bottom:8px">🎉</div>
+      <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:800;color:var(--text);margin-bottom:6px">${r.name}</div>
+      <div style="font-size:12.5px;color:var(--text-sub);margin-bottom:4px">📍 ${r.shortAddr || r.address}</div>
+      <div style="font-size:13px;color:var(--primary);font-weight:700;margin-bottom:6px">💵 ${r.price}</div>
+      ${travel ? `<div style="font-size:12px;color:var(--text-sub);margin-bottom:10px">🚶 ${travel.walk} phút &nbsp;·&nbsp; 🏍️ ${travel.bike} phút từ FPT ĐN</div>` : ''}
+      <div style="display:flex;gap:8px;justify-content:center">
+        <button class="btn-pri" style="height:38px;font-size:13px;padding:0 18px;border-radius:19px;flex:1"
+          onclick="closeWheel();openModalById(${r.id})">Xem chi tiết →</button>
+        <button onclick="spinWheel()" style="height:38px;padding:0 14px;border-radius:19px;border:1.5px solid #7C3AED;background:white;color:#7C3AED;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer">↺ Quay lại</button>
+      </div>
+    </div>`;
+}
+
+function openModalById(id) {
+  const r = RESTAURANTS.find(x => x.id === id);
+  if (r) openModal(r);
 }
 /* ── INIT ── */
 renderCards();
@@ -2410,6 +2781,39 @@ window.editReply = function(reviewId, restaurantId, btn) {
     </div>
     <div class="admin-panel-body" id="admin-panel-body">
       <div class="admin-panel-empty">⏳ Đang tải...</div>
+    </div>
+  </div>
+</div>
+<!-- SPIN WHEEL FAB -->
+<button class="wheel-fab" onclick="openWheel()" title="Vòng quay ngẫu nhiên">🎡</button>
+
+<!-- SPIN WHEEL MODAL -->
+<div class="wheel-overlay" id="wheel-overlay">
+  <div class="wheel-modal">
+    <div class="wheel-modal-head">
+      <h3>🎡 Vòng quay may mắn</h3>
+      <button class="wheel-modal-close" onclick="closeWheel()">✕</button>
+    </div>
+    <div class="wheel-modal-body">
+      <div class="filter-group-label" style="margin-bottom:10px">Chọn nhóm quán:</div>
+      <div class="wheel-options" id="wheel-options">
+        <button class="wheel-opt active" data-cat="all">🍴 Tất cả</button>
+        <button class="wheel-opt" data-cat="com">🍚 Cơm</button>
+        <button class="wheel-opt" data-cat="bun">🍜 Bún</button>
+        <button class="wheel-opt" data-cat="do-uong">🧋 Đồ uống</button>
+        <button class="wheel-opt" data-cat="banh-mi">🥖 Bánh mì</button>
+        <button class="wheel-opt" data-cat="an-vat">🍦 Ăn vặt</button>
+        <button class="wheel-opt" data-cat="custom">✏️ Tự nhập</button>
+      </div>
+      <input class="wheel-custom-input" id="wheel-custom-input"
+        placeholder="Nhập tên món hoặc từ khoá... (VD: cơm gà, trà sữa)"
+        style="display:none" oninput="updateWheelFromCustom()">
+      <div class="wheel-canvas-wrap">
+        <div class="wheel-pointer">▼</div>
+        <canvas id="wheel-canvas" width="280" height="280"></canvas>
+      </div>
+      <button class="btn-spin" id="btn-spin" onclick="spinWheel()">🎰 QUAY NGAY!</button>
+      <div id="wheel-result"></div>
     </div>
   </div>
 </div>
