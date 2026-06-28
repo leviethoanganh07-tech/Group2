@@ -854,6 +854,10 @@ main{max-width:1200px;margin:0 auto;padding:32px 24px 80px}
 }
 .report-box h3 { font-family:'Sora',sans-serif; font-size:16px; font-weight:800; margin-bottom:14px; }
 .report-opts { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
+<div class="report-other-wrap" id="report-other-wrap">
+  <textarea class="report-other-input" id="report-other-text"
+    placeholder="Mô tả lỗi bạn gặp phải..."></textarea>
+</div>
 .report-opt {
   display:flex; align-items:center; gap:10px; padding:10px 14px;
   border:1.5px solid var(--border); border-radius:12px; cursor:pointer;
@@ -996,6 +1000,109 @@ main{max-width:1200px;margin:0 auto;padding:32px 24px 80px}
 }
 .btn-chot:hover { opacity:.9; }
 .btn-chot:disabled { opacity:.5; cursor:not-allowed; }
+/* ── USER AUTH ── */
+.user-auth-btn {
+  height: 36px; padding: 0 14px; border: 1.5px solid var(--border);
+  border-radius: 18px; background: white; font-family: 'Nunito', sans-serif;
+  font-size: 13px; font-weight: 700; color: var(--text-sub);
+  cursor: pointer; transition: all .2s; white-space: nowrap;
+}
+.user-auth-btn:hover { border-color: #7C3AED; color: #7C3AED; }
+.user-auth-btn.signed-in { background: #FAF5FF; border-color: #A855F7; color: #7C3AED; }
+.auth-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 1100;
+  display: flex; align-items: center; justify-content: center; padding: 16px;
+  opacity: 0; pointer-events: none; transition: opacity .25s; backdrop-filter: blur(4px);
+}
+.auth-overlay.open { opacity: 1; pointer-events: all; }
+.auth-modal {
+  background: white; border-radius: 22px; width: 100%; max-width: 390px;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.2); overflow: hidden;
+  border: 1.5px solid #E9D5FF;
+  transform: translateY(24px); transition: transform .28s cubic-bezier(.22,.68,0,1.1);
+}
+.auth-overlay.open .auth-modal { transform: translateY(0); }
+.auth-tabs { display: flex; border-bottom: 1.5px solid var(--border); }
+.auth-tab {
+  flex: 1; height: 48px; border: none; background: none;
+  font-family: 'Nunito', sans-serif; font-size: 14px; font-weight: 700;
+  color: var(--text-muted); cursor: pointer; transition: all .2s;
+  border-bottom: 3px solid transparent; margin-bottom: -1.5px;
+}
+.auth-tab.active { color: #7C3AED; border-bottom-color: #7C3AED; }
+.auth-body { padding: 22px 24px 26px; }
+.auth-field { margin-bottom: 14px; }
+.auth-label { display: block; font-size: 12px; font-weight: 700; color: var(--text-sub); margin-bottom: 6px; }
+.auth-input {
+  width: 100%; height: 42px; border: 1.5px solid var(--border); border-radius: 11px;
+  padding: 0 42px 0 14px; font-family: 'Nunito', sans-serif; font-size: 14px;
+  outline: none; color: var(--text); transition: border-color .2s;
+}
+.auth-input:focus { border-color: #7C3AED; }
+.auth-pw-wrap { position: relative; }
+.auth-eye {
+  position: absolute; right: 13px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer; font-size: 16px; color: var(--text-muted);
+}
+.auth-error {
+  font-size: 12px; color: #DC2626; font-weight: 600;
+  margin-bottom: 12px; display: none; text-align: center; padding: 8px; background: #FEF2F2; border-radius: 8px;
+}
+.auth-error.show { display: block; }
+.btn-auth-submit {
+  width: 100%; height: 44px; background: linear-gradient(135deg, #7C3AED, #A855F7);
+  color: white; border: none; border-radius: 22px; font-family: 'Nunito', sans-serif;
+  font-size: 14px; font-weight: 800; cursor: pointer; transition: opacity .2s; margin-bottom: 10px;
+}
+.btn-auth-submit:disabled { opacity: .6; cursor: not-allowed; }
+.btn-auth-cancel {
+  width: 100%; height: 36px; background: none; color: var(--text-muted);
+  border: none; font-family: 'Nunito', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.auth-user-bar {
+  background: #FAF5FF; padding: 12px 16px; border-bottom: 1.5px solid #E9D5FF;
+  display: flex; align-items: center; gap: 10px;
+}
+.auth-avatar {
+  width: 38px; height: 38px; background: linear-gradient(135deg, #7C3AED, #A855F7);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 16px; color: white; font-weight: 800; flex-shrink: 0;
+}
+.auth-username-disp { font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700; color: #4C1D95; }
+.auth-user-badges { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 2px; }
+.btn-logout {
+  margin-left: auto; padding: 5px 12px; border-radius: 10px;
+  border: 1.5px solid #A855F7; background: white; color: #7C3AED;
+  font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Nunito', sans-serif;
+  white-space: nowrap;
+}
+/* ── WHEEL HISTORY FILTER ── */
+.wheel-history-row {
+  display: flex; align-items: center; justify-content: space-between;
+  background: #F5F3FF; border: 1.5px solid #E9D5FF; border-radius: 12px;
+  padding: 10px 14px; margin-bottom: 14px;
+}
+.wheel-history-label {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 700; color: #5B21B6; cursor: pointer;
+}
+.wheel-history-label input { cursor: pointer; accent-color: #7C3AED; }
+.btn-reset-spin-history {
+  padding: 5px 12px; border-radius: 10px; border: 1.5px solid #A855F7;
+  background: white; color: #7C3AED; font-size: 12px; font-weight: 700;
+  cursor: pointer; font-family: 'Nunito', sans-serif; transition: all .2s;
+}
+.btn-reset-spin-history:hover { background: #7C3AED; color: white; }
+/* ── REPORT OTHER INPUT ── */
+.report-other-wrap { margin-top: 10px; display: none; }
+.report-other-wrap.show { display: block; }
+.report-other-input {
+  width: 100%; border: 1.5px solid var(--border); border-radius: 10px;
+  padding: 10px 14px; font-family: 'Nunito', sans-serif; font-size: 13px;
+  outline: none; resize: vertical; min-height: 72px; color: var(--text);
+  transition: border-color .2s;
+}
+.report-other-input:focus { border-color: var(--primary); }
 </style>
 </head>
 <body>
@@ -1016,6 +1123,9 @@ main{max-width:1200px;margin:0 auto;padding:32px 24px 80px}
       <div class="viewed-badge" id="viewed-badge">0 Đã xem</div>
         <button class="header-admin-btn" id="btn-admin-login" onclick="toggleAdmin()">
           🔐 Admin
+        </button>
+        <button class="user-auth-btn" id="btn-user-auth" onclick="openAuthModal()">
+          👤 Đăng nhập
         </button>
     </div>
   </div>
@@ -2855,7 +2965,224 @@ window.showWheelResult = function() {
   const r    = wheelItems[idx];
   if (r) recordSpin(r.id);
 };
+/* ================================================================
+   USER AUTH SYSTEM
+================================================================ */
+let _currentUser = null;
+let _userSpinHistory = [];
 
+(function initSession() {
+  const saved = localStorage.getItem('foodmap_user');
+  if (saved) { _currentUser = saved; }
+})();
+
+function openAuthModal(tab) {
+  if (_currentUser) {
+    // Already logged in → show profile
+    document.getElementById('auth-overlay').classList.add('open');
+    document.getElementById('auth-user-bar').style.display = 'flex';
+    document.getElementById('auth-tab-content').style.display = 'none';
+    document.getElementById('auth-avatar-letter').textContent = _currentUser[0].toUpperCase();
+    document.getElementById('auth-username-disp').textContent = _currentUser;
+    // Show badges
+    const spinH = window.getSpinHistory ? window.getSpinHistory() : getSpinHistory();
+    const badges = computeUserBadges(spinH.length, spinH.filter(h => h.chot).length);
+    document.getElementById('auth-user-badges-row').innerHTML = badges.map(b =>
+      `<span class="badge-chip ${b.cls}">${b.icon} ${b.label}</span>`
+    ).join('');
+    return;
+  }
+  document.getElementById('auth-user-bar').style.display = 'none';
+  document.getElementById('auth-tab-content').style.display = 'block';
+  document.getElementById('auth-overlay').classList.add('open');
+  switchAuthTab(tab || 'login');
+  document.getElementById('auth-error').classList.remove('show');
+  document.getElementById('auth-username').value = '';
+  document.getElementById('auth-password').value = '';
+}
+
+function closeAuthModal() {
+  document.getElementById('auth-overlay').classList.remove('open');
+}
+
+function switchAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+  const tabBtn = document.querySelector(`.auth-tab[data-tab="${tab}"]`);
+  if (tabBtn) tabBtn.classList.add('active');
+  document.getElementById('auth-tab-content').dataset.tab = tab;
+  document.getElementById('auth-btn-text').textContent = tab === 'login' ? 'Đăng nhập' : 'Đăng ký';
+  document.getElementById('auth-error').classList.remove('show');
+}
+
+document.addEventListener('click', e => {
+  if (e.target === document.getElementById('auth-overlay')) closeAuthModal();
+});
+
+function toggleAuthPw() {
+  const inp = document.getElementById('auth-password');
+  const btn = document.getElementById('auth-eye');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  btn.textContent = inp.type === 'password' ? '👁️' : '🙈';
+}
+
+async function submitAuth() {
+  const username = document.getElementById('auth-username').value.trim().toLowerCase();
+  const password = document.getElementById('auth-password').value;
+  const tab = document.getElementById('auth-tab-content').dataset.tab;
+  const errEl = document.getElementById('auth-error');
+  const btn = document.getElementById('btn-auth-submit');
+
+  if (!username || !password) {
+    errEl.textContent = '⚠️ Vui lòng nhập đầy đủ thông tin!'; errEl.classList.add('show'); return;
+  }
+  if (username.length < 3) {
+    errEl.textContent = '⚠️ Tên đăng nhập tối thiểu 3 ký tự!'; errEl.classList.add('show'); return;
+  }
+  if (password.length < 6) {
+    errEl.textContent = '⚠️ Mật khẩu tối thiểu 6 ký tự!'; errEl.classList.add('show'); return;
+  }
+  // No spaces
+  if (/\s/.test(username)) {
+    errEl.textContent = '⚠️ Tên đăng nhập không được có khoảng trắng!'; errEl.classList.add('show'); return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '⏳ Đang xử lý...';
+  errEl.classList.remove('show');
+
+  try {
+    await window._authSubmit(username, password, tab);
+  } catch(e) {
+    errEl.textContent = '❌ ' + e.message; errEl.classList.add('show');
+  } finally {
+    btn.disabled = false;
+    document.getElementById('auth-btn-text').textContent = tab === 'login' ? 'Đăng nhập' : 'Đăng ký';
+  }
+}
+
+function setCurrentUser(username) {
+  _currentUser = username;
+  localStorage.setItem('foodmap_user', username);
+  closeAuthModal();
+  updateUserBtn();
+  if (window._loadUserSpinHistoryFromFirebase) window._loadUserSpinHistoryFromFirebase(username);
+}
+
+function logout() {
+  if (!confirm('Đăng xuất khỏi tài khoản ' + _currentUser + '?')) return;
+  _currentUser = null;
+  _userSpinHistory = [];
+  localStorage.removeItem('foodmap_user');
+  closeAuthModal();
+  updateUserBtn();
+  updateHistoryBadge();
+}
+
+function updateUserBtn() {
+  const btn = document.getElementById('btn-user-auth');
+  if (!btn) return;
+  if (_currentUser) {
+    btn.textContent = '👤 ' + _currentUser;
+    btn.classList.add('signed-in');
+  } else {
+    btn.textContent = '👤 Đăng nhập';
+    btn.classList.remove('signed-in');
+  }
+}
+
+function computeUserBadges(spinCount, chotCount) {
+  const earned = [];
+  if (spinCount >= 1)  earned.push({ icon:'🌱', label:'Thực khách mới',       cls:'badge-chip-1' });
+  if (spinCount >= 5)  earned.push({ icon:'🍜', label:'Thực khách quen',       cls:'badge-chip-2' });
+  if (spinCount >= 15) earned.push({ icon:'⭐', label:'Foodie FPT',            cls:'badge-chip-3' });
+  if (spinCount >= 30) earned.push({ icon:'🏆', label:'Chuyên gia ẩm thực',   cls:'badge-chip-4' });
+  if (chotCount >= 10) earned.push({ icon:'👑', label:'Chiến thần ẩm thực',   cls:'badge-chip-5' });
+  return earned;
+}
+
+/* ── OVERRIDE getSpinHistory → Firebase when logged in ── */
+const _origGetSpinHistory2 = getSpinHistory;
+window.getSpinHistory = function() {
+  if (_currentUser && _userSpinHistory.length > 0) return _userSpinHistory;
+  return _origGetSpinHistory2();
+};
+
+/* ── OVERRIDE recordSpin → also Firebase ── */
+const _origRecordSpin2 = recordSpin;
+window.recordSpin = function(restaurantId) {
+  _origRecordSpin2(restaurantId);
+  if (_currentUser && window._recordSpinFirebase) window._recordSpinFirebase(_currentUser, restaurantId);
+};
+
+/* ── OVERRIDE chotQuan → also Firebase ── */
+const _origChotQuan2 = chotQuan;
+window.chotQuan = function(restaurantId) {
+  _origChotQuan2(restaurantId);
+  if (_currentUser && window._chotQuanFirebase) window._chotQuanFirebase(_currentUser, restaurantId);
+};
+
+/* ── OVERRIDE clearHistory → also Firebase ── */
+window.clearHistory = function() {
+  if (!confirm('Xoá toàn bộ lịch sử quay?')) return;
+  localStorage.removeItem('foodmap_spin_history');
+  _userSpinHistory = [];
+  if (_currentUser && window._clearHistoryFirebase) window._clearHistoryFirebase(_currentUser);
+  updateHistoryBadge();
+  renderHistory();
+};
+
+/* ── WHEEL FILTER SPUN ── */
+let wheelFilterSpun = false;
+
+function toggleWheelFilterSpun() {
+  wheelFilterSpun = document.getElementById('wheel-filter-spun')?.checked || false;
+  applyWheelFiltersToItems();
+}
+
+function confirmResetSpinHistory() {
+  if (!confirm('Reset lịch sử quay? Các quán đã bỏ qua sẽ xuất hiện lại trong vòng quay.')) return;
+  localStorage.removeItem('foodmap_spin_history');
+  _userSpinHistory = [];
+  if (_currentUser && window._clearHistoryFirebase) window._clearHistoryFirebase(_currentUser);
+  updateHistoryBadge();
+  wheelFilterSpun = false;
+  const cb = document.getElementById('wheel-filter-spun');
+  if (cb) cb.checked = false;
+  applyWheelFiltersToItems();
+}
+
+/* ── OVERRIDE applyWheelFiltersToItems → filter spun ── */
+const _origApplyWheelFilters2 = applyWheelFiltersToItems;
+window.applyWheelFiltersToItems = function() {
+  _origApplyWheelFilters2();
+  if (wheelFilterSpun) {
+    const history = window.getSpinHistory();
+    const spunIds = new Set(history.map(h => h.id));
+    wheelItems = wheelItems.filter(r => !spunIds.has(r.id));
+  }
+  drawWheel();
+};
+
+/* ── SCROLL TO RESULT AFTER SPIN ── */
+const _origShowWheelResult2 = showWheelResult;
+window.showWheelResult = function() {
+  _origShowWheelResult2();
+  setTimeout(() => {
+    const el = document.getElementById('wheel-result');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 350);
+};
+
+/* ── OVERRIDE selectReport → show textarea for "other" ── */
+const _origSelectReport2 = selectReport;
+window.selectReport = function(el) {
+  _origSelectReport2(el);
+  const wrap = document.getElementById('report-other-wrap');
+  if (wrap) wrap.classList.toggle('show', el.dataset.type === 'other');
+};
+
+/* ── INIT USER UI ── */
+updateUserBtn();
 /* ── INIT ── */
 renderCards();
 updateHeroRating();
@@ -2893,7 +3220,8 @@ function closeAdminPanel() {
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js";
   import { getFirestore, collection, addDoc, query, orderBy,
-           onSnapshot, serverTimestamp, deleteDoc, doc , updateDoc }
+           onSnapshot, serverTimestamp, deleteDoc, doc , updateDoc ,
+           getDoc, getDocs, setDoc, where, limit }
     from "https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -3354,6 +3682,113 @@ window.editReply = function(reviewId, restaurantId, btn) {
   form.style.display = 'flex';
   input.focus();
 };
+/* ================================================================
+   USER AUTH - FIREBASE
+================================================================ */
+window._authSubmit = async function(username, password, tab) {
+  const buf  = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(password));
+  const hash = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+
+  const userRef  = doc(db, 'users', username);
+  const userSnap = await getDoc(userRef);
+
+  if (tab === 'login') {
+    if (!userSnap.exists()) throw new Error('Tên đăng nhập không tồn tại!');
+    if (userSnap.data().passwordHash !== hash) throw new Error('Mật khẩu không đúng!');
+    window.setCurrentUser(username);
+  } else {
+    if (userSnap.exists()) throw new Error('Tên đăng nhập đã tồn tại, hãy chọn tên khác!');
+    await setDoc(userRef, { passwordHash: hash, createdAt: serverTimestamp(), displayName: username });
+    window.setCurrentUser(username);
+  }
+};
+
+/* ================================================================
+   FIREBASE SPIN HISTORY
+================================================================ */
+window._loadUserSpinHistoryFromFirebase = async function(username) {
+  if (!username) return;
+  try {
+    const q = query(
+      collection(db, 'spinHistory'),
+      where('username', '==', username),
+      orderBy('timestamp', 'desc'),
+      limit(50)
+    );
+    const snap = await getDocs(q);
+    window._userSpinHistory = snap.docs.map(d => ({ _docId: d.id, ...d.data() }));
+    updateHistoryBadge();
+    applyWheelFiltersToItems();
+  } catch(e) { console.warn('Load spin history:', e); }
+};
+
+window._recordSpinFirebase = async function(username, restaurantId) {
+  const r = RESTAURANTS.find(x => x.id === restaurantId);
+  if (!r) return;
+  const now = new Date();
+  const entry = {
+    username,
+    id: r.id, name: r.name, price: r.price,
+    shortAddr: r.shortAddr || r.address,
+    date: now.toLocaleDateString('vi-VN', { weekday:'short', day:'numeric', month:'numeric' }),
+    time: now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0'),
+    chot: false, timestamp: serverTimestamp()
+  };
+  try {
+    const ref = await addDoc(collection(db, 'spinHistory'), entry);
+    window._userSpinHistory.unshift({ _docId: ref.id, ...entry });
+    updateHistoryBadge();
+  } catch(e) { console.warn('Record spin:', e); }
+};
+
+window._chotQuanFirebase = async function(username, restaurantId) {
+  const entry = window._userSpinHistory?.find(h => h.id === restaurantId && !h.chot);
+  if (entry?._docId) {
+    try {
+      await updateDoc(doc(db, 'spinHistory', entry._docId), { chot: true });
+      entry.chot = true;
+    } catch(e) { console.warn('Chot quan:', e); }
+  }
+};
+
+window._clearHistoryFirebase = async function(username) {
+  try {
+    const q = query(collection(db, 'spinHistory'), where('username', '==', username));
+    const snap = await getDocs(q);
+    await Promise.all(snap.docs.map(d => deleteDoc(doc(db, 'spinHistory', d.id))));
+    window._userSpinHistory = [];
+  } catch(e) { console.warn('Clear history:', e); }
+};
+
+/* ── Auto-load spin history if already logged in ── */
+if (window._currentUser) {
+  window._loadUserSpinHistoryFromFirebase(window._currentUser);
+}
+
+/* ── submitReport: thêm nội dung "other" ── */
+window.submitReport = async function() {
+  if (!window._selectedReportType) { alert('⚠️ Chọn loại lỗi trước!'); return; }
+  const btn = document.getElementById('btn-report-submit');
+  const otherText = document.getElementById('report-other-text')?.value?.trim() || '';
+  if (window._selectedReportType === 'other' && !otherText) {
+    alert('⚠️ Vui lòng mô tả lỗi bạn gặp!'); return;
+  }
+  btn.disabled = true; btn.textContent = '⏳ Đang gửi...';
+  const r = RESTAURANTS.find(x => x.id === window._currentRestId);
+  try {
+    await addDoc(collection(db, 'errorReports'), {
+      restaurantId: window._currentRestId,
+      restaurantName: r?.name || '',
+      type: window._selectedReportType,
+      detail: otherText || '',
+      date: new Date().toLocaleDateString('vi-VN'),
+      timestamp: serverTimestamp()
+    });
+    alert('✅ Cảm ơn! Chúng tôi sẽ xem xét và cập nhật sớm nhé.');
+    closeReportModal();
+  } catch(e) { alert('❌ Lỗi: ' + e.message); }
+  btn.disabled = false; btn.textContent = '📤 Gửi báo cáo';
+};
 </script>
 <!-- ADMIN PASSWORD MODAL -->
 <div class="pw-overlay" id="pw-overlay">
@@ -3486,6 +3921,14 @@ window.editReply = function(reviewId, restaurantId, btn) {
           </label>
         </div>
       </div>
+      <!-- WHEEL HISTORY FILTER -->
+      <div class="wheel-history-row">
+        <label class="wheel-history-label">
+          <input type="checkbox" id="wheel-filter-spun" onchange="toggleWheelFilterSpun()">
+          🚫 Bỏ qua quán đã quay
+        </label>
+        <button class="btn-reset-spin-history" onclick="confirmResetSpinHistory()">🗑️ Reset lịch sử</button>
+      </div>
       <div class="wheel-canvas-wrap">
         <div class="wheel-pointer">▼</div>
         <canvas id="wheel-canvas" width="280" height="280"></canvas>
@@ -3521,6 +3964,46 @@ window.editReply = function(reviewId, restaurantId, btn) {
       <button class="history-modal-close" onclick="closeHistory()">✕</button>
     </div>
     <div class="history-body" id="history-body"></div>
+  </div>
+</div>
+<!-- AUTH MODAL -->
+<div class="auth-overlay" id="auth-overlay">
+  <div class="auth-modal">
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-tab="login" onclick="switchAuthTab('login')">Đăng nhập</button>
+      <button class="auth-tab" data-tab="register" onclick="switchAuthTab('register')">Đăng ký</button>
+    </div>
+    <!-- User bar (hiện khi đã đăng nhập) -->
+    <div class="auth-user-bar" id="auth-user-bar" style="display:none">
+      <div class="auth-avatar" id="auth-avatar-letter">?</div>
+      <div>
+        <div class="auth-username-disp" id="auth-username-disp"></div>
+        <div class="auth-user-badges" id="auth-user-badges-row"></div>
+      </div>
+      <button class="btn-logout" onclick="logout()">Đăng xuất</button>
+    </div>
+    <div class="auth-body" id="auth-tab-content" data-tab="login">
+      <div class="auth-field">
+        <label class="auth-label">👤 Tên đăng nhập</label>
+        <input class="auth-input" id="auth-username" type="text"
+          placeholder="Ít nhất 3 ký tự, không dấu" autocomplete="username"
+          onkeydown="if(event.key==='Enter')submitAuth()">
+      </div>
+      <div class="auth-field">
+        <label class="auth-label">🔒 Mật khẩu</label>
+        <div class="auth-pw-wrap">
+          <input class="auth-input" id="auth-password" type="password"
+            placeholder="Ít nhất 6 ký tự" autocomplete="current-password"
+            onkeydown="if(event.key==='Enter')submitAuth()">
+          <button class="auth-eye" id="auth-eye" type="button" onclick="toggleAuthPw()">👁️</button>
+        </div>
+      </div>
+      <div class="auth-error" id="auth-error"></div>
+      <button class="btn-auth-submit" id="btn-auth-submit" onclick="submitAuth()">
+        <span id="auth-btn-text">Đăng nhập</span>
+      </button>
+      <button class="btn-auth-cancel" onclick="closeAuthModal()">Huỷ</button>
+    </div>
   </div>
 </div>
 </body>
