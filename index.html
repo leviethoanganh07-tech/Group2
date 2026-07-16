@@ -4195,6 +4195,11 @@ function closeSuggest() {
 }
 function previewSuggestImg(input) {
   if (!input.files || !input.files[0]) return;
+  if (!window._currentUser && !window.isAdmin) {
+    alert('🔒 Cần đăng nhập để đính kèm ảnh khi đề xuất quán (vẫn gửi đề xuất được bình thường, chỉ là không có ảnh thôi).');
+    input.value = '';
+    return;
+  }
   const reader = new FileReader();
   reader.onload = e => {
     const preview = document.getElementById('sg-img-preview');
@@ -4291,6 +4296,8 @@ document.addEventListener('click', e => {
   import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
            updateProfile, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup }
     from "https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js";
+  import { getFunctions, httpsCallable }
+    from "https://www.gstatic.com/firebasejs/11.0.0/firebase-functions.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAUzMd29DIBteeEU5sqxl0swsK2wDBjyKI",
@@ -4305,6 +4312,7 @@ document.addEventListener('click', e => {
   const db  = getFirestore(app);
   const auth = getAuth(app);
   const googleProvider = new GoogleAuthProvider();
+  const functions = getFunctions(app);
   let unsubscribe = null;
 
   window._db = db;
@@ -4650,18 +4658,35 @@ window.submitAdminComment = async function() {
     alert('❌ Lỗi: ' + e.message);
   }
 };
-/* ── CLOUDINARY CONFIG ── */
-const CLOUDINARY_CLOUD = 'dxhisqoig';
-const CLOUDINARY_PRESET = 'foodmap_unsigned';
-
+/* ── CLOUDINARY: SIGNED UPLOAD QUA CLOUD FUNCTION ──
+   Không còn dùng "unsigned upload preset" lộ công khai trong code nữa.
+   Mỗi lần upload phải xin chữ ký từ Cloud Function (chỉ cấp cho người đã đăng nhập),
+   nên ai đó có đọc được code cũng không tự upload được vào tài khoản Cloudinary. */
 async function uploadToCloudinary(file) {
+  if (!auth.currentUser) {
+    throw new Error('Cần đăng nhập trước khi upload ảnh.');
+  }
+  const getSignature = httpsCallable(functions, 'getCloudinarySignature');
+  let sig;
+  try {
+    const result = await getSignature();
+    sig = result.data;
+  } catch (e) {
+    throw new Error('Không xin được quyền upload: ' + (e.message || 'lỗi không xác định'));
+  }
+
   const formData = new FormData();
   formData.append('file', file);
-  formData.append('upload_preset', CLOUDINARY_PRESET);
-  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, {
+  formData.append('api_key', sig.apiKey);
+  formData.append('timestamp', sig.timestamp);
+  formData.append('signature', sig.signature);
+  formData.append('folder', sig.folder);
+
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${sig.cloudName}/image/upload`, {
     method: 'POST', body: formData
   });
   const data = await res.json();
+  if (!data.secure_url) throw new Error(data.error?.message || 'Upload ảnh thất bại');
   return data.secure_url;
 }
 
@@ -5075,16 +5100,10 @@ window.submitNewRestaurant = async function() {
 
   const cats = [...document.querySelectorAll('.addrest-cat-check input:checked')].map(c => c.value);
 
-  // Validate
+  // Validate — chỉ bắt buộc Tên quán, các trường khác để trống vẫn lưu được
+  // (dùng giá trị mặc định hợp lý, sửa bổ sung sau cũng được)
   const errors = [];
-  if (!name)      errors.push('Tên quán');
-  if (!address)   errors.push('Địa chỉ đầy đủ');
-  if (!shortAddr) errors.push('Địa chỉ ngắn');
-  if (!price)     errors.push('Khoảng giá');
-  if (!priceNum)  errors.push('Giá thấp nhất');
-  if (!tagsRaw)   errors.push('Tags món ăn');
-  if (!desc)      errors.push('Mô tả quán');
-  if (cats.length === 0) errors.push('Danh mục (chọn ít nhất 1)');
+  if (!name) errors.push('Tên quán');
 
   if (errors.length) {
     errEl.textContent = '⚠️ Vui lòng điền: ' + errors.join(', ');
@@ -5134,13 +5153,19 @@ window.submitNewRestaurant = async function() {
   }
 
   const restData = {
-    id: targetId, name, address, shortAddr, price, priceNum, rating,
+    id: targetId, name,
+    address: address || 'Đang cập nhật địa chỉ',
+    shortAddr: shortAddr || address || 'Đang cập nhật',
+    price: price || 'Đang cập nhật giá',
+    priceNum, rating,
     tags, categories: cats,
     coverImg: cover, photos,
     openHours: [{ open: openT, close: closeT }],
     hours: `${openT} – ${closeT}`,
     distance, phone,
-    mapLat: lat, mapLng: lng, mapLink, desc, keywords,
+    mapLat: lat, mapLng: lng, mapLink,
+    desc: desc || 'Thông tin quán đang được cập nhật, quay lại sau nhé!',
+    keywords,
     addedByAdmin: true,
     addedAt: isEditing ? (RESTAURANTS.find(r => r.id === targetId)?.addedAt || new Date().toLocaleString('vi-VN')) : new Date().toLocaleString('vi-VN')
   };
@@ -5719,12 +5744,12 @@ if (window._currentUser) {
           </div>
         </div>
         <div class="addrest-field">
-          <label>Địa chỉ đầy đủ <span class="req">*</span></label>
+          <label>Địa chỉ đầy đủ</label>
           <input type="text" id="ar-address" placeholder="VD: 12 Lê Văn Hiến, Ngũ Hành Sơn, Đà Nẵng">
         </div>
         <div class="addrest-row">
           <div class="addrest-field">
-            <label>Địa chỉ ngắn <span class="req">*</span></label>
+            <label>Địa chỉ ngắn</label>
             <input type="text" id="ar-shortaddr" placeholder="VD: Gần FPT City">
           </div>
           <div class="addrest-field">
@@ -5736,20 +5761,20 @@ if (window._currentUser) {
         <div class="addrest-section-title">💰 Giá & Danh mục</div>
         <div class="addrest-row">
           <div class="addrest-field">
-            <label>Khoảng giá <span class="req">*</span></label>
+            <label>Khoảng giá</label>
             <input type="text" id="ar-price" placeholder="VD: 20k - 40k">
           </div>
           <div class="addrest-field">
-            <label>Giá thấp nhất (VNĐ) <span class="req">*</span></label>
+            <label>Giá thấp nhất (VNĐ)</label>
             <input type="number" id="ar-pricenum" placeholder="VD: 20000">
           </div>
         </div>
         <div class="addrest-field">
-          <label>Tags món ăn <span class="req">*</span></label>
+          <label>Tags món ăn</label>
           <input type="text" id="ar-tags" placeholder="VD: cơm tấm, bì, chả (cách nhau bởi dấu phẩy)">
         </div>
         <div class="addrest-field">
-          <label>Danh mục <span class="req">*</span></label>
+          <label>Danh mục</label>
           <div class="addrest-cats">
             <label class="addrest-cat-check"><input type="checkbox" value="com"> 🍚 Cơm</label>
             <label class="addrest-cat-check"><input type="checkbox" value="bun-pho"> 🍜 Bún/Phở</label>
@@ -5765,11 +5790,11 @@ if (window._currentUser) {
         <div class="addrest-section-title">🕐 Giờ & Bản đồ</div>
         <div class="addrest-row">
           <div class="addrest-field">
-            <label>Giờ mở <span class="req">*</span></label>
+            <label>Giờ mở</label>
             <input type="time" id="ar-open" value="07:00">
           </div>
           <div class="addrest-field">
-            <label>Giờ đóng <span class="req">*</span></label>
+            <label>Giờ đóng</label>
             <input type="time" id="ar-close" value="21:00">
           </div>
         </div>
@@ -5790,7 +5815,7 @@ if (window._currentUser) {
 
         <div class="addrest-section-title">📝 Mô tả & Ảnh</div>
         <div class="addrest-field">
-          <label>Mô tả quán <span class="req">*</span></label>
+          <label>Mô tả quán</label>
           <textarea id="ar-desc" rows="3" placeholder="Mô tả ngắn về quán, không khí, món đặc trưng..."></textarea>
         </div>
         <div class="addrest-field">
